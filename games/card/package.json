@@ -1,0 +1,14 @@
+{
+  "name": "block-canteen-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/app.js --bundle --format=iife --target=es2022 --outfile=game.js --banner:js=\"/* Based on Slay the Web (AGPL-3.0-or-later). See LICENSE-SlayTheWeb.txt. */\""
+  },
+  "dependencies": {
+    "immer": "10.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.27.7"
+  }
+}

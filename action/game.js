@@ -72,13 +72,20 @@ class Game{
 }
 const game=new Game();
 let view={scale:1,x:0,y:0,width:W,height:H};
+const touchScreen=matchMedia('(pointer: coarse)');
+const phonePortrait=matchMedia('(pointer: coarse) and (orientation: portrait)');
+let forcedLandscape=false;
 function resize(){
+ const rotated=phonePortrait.matches;
+ if(rotated!==forcedLandscape){
+  forcedLandscape=rotated;
+  document.documentElement.toggleAttribute('data-forced-landscape',rotated);
+  resetControls();
+ }
  const w=Math.max(1,canvas.clientWidth),h=Math.max(1,canvas.clientHeight);
  const oldWidth=W,oldHeight=H;
- const portrait=innerWidth<700&&innerWidth<innerHeight;
- const handheldLandscape=matchMedia('(pointer: coarse) and (orientation: landscape)').matches;
- W=portrait?620:1100;
- H=portrait?920:handheldLandscape?540:720;
+ W=1100;
+ H=touchScreen.matches?540:720;
  const dpr=Math.min(devicePixelRatio||1,2),scale=Math.min(w/W,h/H);
  canvas.width=w*dpr;canvas.height=h*dpr;
  view={width:w,height:h,dpr,scale,x:(w-W*scale)/2,y:(h-H*scale)/2};
@@ -93,7 +100,17 @@ function resize(){
 }
 function box(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),w,h)}
 let last=0;function frame(t){const dt=Math.min((t-last)/1000||0,.04);last=t;game.uiUpdate(dt);game.update(dt);if(typeof draw==='function')draw();requestAnimationFrame(frame)}
-function point(e){const r=canvas.getBoundingClientRect();input.mx=(e.clientX-r.left-view.x)/view.scale;input.my=(e.clientY-r.top-view.y)/view.scale}
+function canvasPoint(e){
+ const bounds=canvas.getBoundingClientRect();
+ return forcedLandscape
+  ?{x:e.clientY-bounds.top,y:bounds.right-e.clientX}
+  :{x:e.clientX-bounds.left,y:e.clientY-bounds.top};
+}
+function point(e){
+ const {x,y}=canvasPoint(e);
+ input.mx=(x-view.x)/view.scale;
+ input.my=(y-view.y)/view.scale;
+}
 canvas.addEventListener('pointermove',point);
 canvas.addEventListener('pointerdown',e=>{
  if(e.button!==0||!game.machine.active)return;
@@ -145,7 +162,8 @@ let stickId=null,fireId=null,stickOrigin=null;
 const stick=$('stick'),fireButton=$('fire');
 function stickMove(event){
  if(event.pointerId!==stickId)return;
- const x=event.clientX-stickOrigin.x,y=event.clientY-stickOrigin.y;
+ const sx=event.clientX-stickOrigin.x,sy=event.clientY-stickOrigin.y;
+ const x=forcedLandscape?sy:sx,y=forcedLandscape?-sx:sy;
  const radius=stickOrigin.radius,distance=Math.hypot(x,y);
  const scale=distance<2?0:Math.min(1,radius/distance);
  input.jx=x*scale/radius;
@@ -181,7 +199,7 @@ stick.onpointerdown=event=>{
  event.preventDefault();
  stickId=event.pointerId;
  const bounds=stick.getBoundingClientRect();
- stickOrigin={x:bounds.left+bounds.width/2,y:bounds.top+bounds.height/2,radius:bounds.width*.31};
+ stickOrigin={x:bounds.left+bounds.width/2,y:bounds.top+bounds.height/2,radius:stick.clientWidth*.31};
  stick.setPointerCapture(stickId);
  stickMove(event);
 };
@@ -199,5 +217,9 @@ fireButton.onpointerdown=event=>{
 fireButton.onpointerup=fireButton.onpointercancel=fireButton.onlostpointercapture=releaseFire;
 $('dashButton').onpointerdown=event=>{event.preventDefault();game.dash()};
 window.addEventListener('resize',resize);
+ for(const query of [touchScreen,phonePortrait]){
+  if(query.addEventListener)query.addEventListener('change',resize);
+  else query.addListener(resize);
+ }
 resize();
 game.hud();

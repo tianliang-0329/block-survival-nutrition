@@ -1,13 +1,10 @@
-# 方块突围 V6.3
+# 合理膳食 · 游戏大厅
 
-[在线试玩](https://tianliang-0329.github.io/block-survival-nutrition/)
+[扫码入口与在线试玩](https://tianliang-0329.github.io/block-survival-nutrition/)
 
-手机推荐横屏。点「开始冒险」后转动手机即可开局，也可点「先用竖屏玩」。左手拖摇杆，右手点按攻击出箭或按住连续攻击，冲刺可同时使用。电脑使用 WASD 或方向键移动，按住鼠标左键射箭，空格冲刺，C 打开工作台，U 打开可选强化。
+- **方块突围 V6.4**（action-demo.html）：即时动作，收集食材并搭配餐盘。手机竖屏时自动将游戏画面转成横向，系统开启方向锁定也可直接开始。左手拖动摇杆，右手点按或按住攻击。电脑 WASD 或方向键移动，鼠标射箭，空格冲刺，C 工作台，U 强化。
+- **方块食堂**（games/card/index.html）：膳食卡牌。打出食材推进战斗，搭配食材可自动合成配方。对应源码、构建配置与许可文件位于 games/card。
 
-V6.3 缩短了开局流程。序章在主菜单按需观看，操作教程会随动作推进。拾取食材、搭配餐盘、首领预告和破盾指引使用界面提示。强化准备好后显示按钮，玩家可以选择时机打开。工作台、图鉴和主动暂停仍会暂停战斗。
+双击 index.html 可以离线进入两款游戏。也可运行 node scripts/serve.mjs。运行 node scripts/build.mjs 生成 dist/index.html 和站点文件，之后可用 node scripts/test-v6.mjs 执行 Edge 浏览器回归测试。
 
-## 本地运行
-
-双击 action-demo.html 或站点根目录的 index.html 即可离线游玩。源码项目运行 node scripts/build.mjs 生成 dist/action-demo.html。之后可运行 node scripts/test-v6.mjs 以 Microsoft Edge 做浏览器回归。也可用 BROWSER_BIN 指定浏览器路径。
-
-原版素材来源见 ASSETS-LICENSES.md 与 assets/minecraft/sources.json。配乐见 AUDIO.md。章节配方属于游戏任务，现实饮食建议看长期搭配。
+方块突围素材来源见 ASSETS-LICENSES.md 与 assets/minecraft/sources.json。卡牌游戏的素材说明可在游戏内查看。配乐见 AUDIO.md。

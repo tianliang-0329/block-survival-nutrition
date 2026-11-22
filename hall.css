@@ -1,0 +1,47 @@
+:root{
+ color-scheme:dark;
+ font:16px/1.55 "Microsoft YaHei UI","PingFang SC",system-ui,sans-serif;
+ background:#192820;color:#f9f1da;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100dvh;background:linear-gradient(145deg,#293d2d,#192820 56%)}
+.hall{max-width:930px;margin:auto;padding:clamp(22px,6vw,62px) clamp(16px,5vw,42px)}
+header{margin-bottom:clamp(17px,4vw,30px)}
+h1,h2,p{margin:0}
+h1{font-size:clamp(1.9rem,6vw,3.2rem);line-height:1.15}
+h1 span{color:#d6ea95}
+header p,.mobile-note{color:#d4dfc4;margin-top:10px}
+.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.game{
+ display:block;min-width:0;text-decoration:none;color:inherit;background:#24362c;
+ border:2px solid #759370;box-shadow:0 4px 0 #0e1914;overflow:hidden
+}
+.game:is(:hover,:focus-visible){outline:3px solid #ffe197;outline-offset:3px}
+.cover{position:relative;display:flex;justify-content:center;align-items:center;min-height:132px}
+.survival .cover{background:linear-gradient(150deg,#c7dd8b,#76a555 68%,#557a4d)}
+.canteen .cover{background:linear-gradient(145deg,#dfb777,#a46840 76%,#854b37)}
+.cover img{image-rendering:pixelated;object-fit:contain}
+.cover-icon{transform:rotate(-14deg);filter:drop-shadow(4px 4px 0 #476443)}
+.cover-detail{margin-top:44px;margin-left:12px}
+.food-card{display:grid;place-items:center;width:58px;height:74px;background:#f3dbaa;border:3px solid #754a35;transform:rotate(-12deg);box-shadow:2px 4px 0 #3e292b80}
+.food-card:nth-child(2){z-index:1;transform:translateY(-7px)}
+.food-card:nth-child(3){transform:rotate(12deg)}
+.info{padding:16px}
+.format{display:block;color:#c6dda8;font-size:.84rem;font-weight:700}
+.canteen .format{color:#f1cb97}
+h2{font-size:1.6rem;line-height:1.3;margin:4px 0}
+.info p{color:#e2e8d7}
+.info strong{display:block;color:#e6f4af;margin-top:12px}
+.canteen .info strong{color:#ffcf92}
+.mobile-note{font-size:.9rem;margin-top:18px}
+@media(max-width:560px){
+ .games{grid-template-columns:1fr;gap:12px}
+ .game{display:grid;grid-template-columns:minmax(78px,25%) minmax(0,1fr)}
+ .cover{min-height:100%}
+ .cover-icon{width:58px;height:58px}
+ .cover-detail{display:none}
+ .food-card{width:54px;height:67px}
+ .food-card:first-child,.food-card:last-child{display:none}
+ .info{padding:12px}
+ .info p{font-size:.9rem}
+}

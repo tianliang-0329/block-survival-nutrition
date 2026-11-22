@@ -1,58 +1,46 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>方块突围 · V6.3 饥饿值危机</title>
-  <link rel="stylesheet" href="action/style.css">
-
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#192820">
+ <title>合理膳食 · 游戏大厅</title>
+ <link rel="stylesheet" href="./hall.css?v=1">
 </head>
 <body>
-<main id="game">
-  <header class="battle-header">
-    <div class="command-row">
-      <div class="stage"><b id="stage"></b><small id="time"></small><span id="stageDots" hidden></span></div>
-      <div class="tools">
-        <button id="upgrade" hidden>强化</button><button id="craft">工作台</button><button id="pause" aria-label="暂停">暂停</button>
-        <button id="sfx" hidden>音效 开</button><button id="music" hidden>音乐 开</button><b id="stats" hidden></b>
-      </div>
-    </div>
-    <div id="bossHud"><b id="bossName"></b><div class="bar"><i id="bossHp"></i></div></div>
-    <div id="toast" role="status"></div>
+ <main class="hall">
+  <header>
+   <h1>合理膳食 <span>游戏大厅</span></h1>
+   <p>选一款游戏，开始你的补给冒险。</p>
   </header>
-  <div class="arena-frame"><canvas id="arena" tabindex="-1" aria-label="方块突围游戏战场"></canvas></div>
-  <footer class="battle-footer">
-    <div id="tutorial"><span id="tip"></span><button id="skip">跳过引导</button></div>
-    <div class="vitals">
-      <div class="health"><b>生命 <span id="hpText"></span></b><div id="hearts" aria-hidden="true"></div><div class="bar"><i id="hp"></i></div></div>
-      <div class="hunger"><b id="hungerText"></b><div id="hunger6" aria-hidden="true"></div></div>
+  <nav class="games" aria-label="选择游戏">
+   <a class="game survival" href="./action-demo.html">
+    <div class="cover" aria-hidden="true">
+     <img src="./assets/minecraft/bow.png" alt="" class="cover-icon" width="80" height="80">
+     <img src="./assets/minecraft/apple.png" alt="" class="cover-detail" width="36" height="36">
     </div>
-    <div class="inventory-row">
-      <div class="hotbar" aria-label="食物库存"></div>
-      <div class="progress"><span id="level"></span><div class="bar xp"><i id="xp"></i></div></div>
-      <div class="dash"><span id="dashText"></span><div class="bar"><i id="dash"></i></div></div>
+    <div class="info">
+     <span class="format">即时动作 · 手机横屏</span>
+     <h2>方块突围</h2>
+     <p>边移动边拉弓，收集食材，搭配餐盘破开首领护盾。</p>
+     <strong>开始突围 <span aria-hidden="true">→</span></strong>
     </div>
-  </footer>
-  <div id="touch" aria-label="触屏操作">
-    <div id="stick" aria-label="拖动摇杆移动"><i id="knob"></i></div>
-    <div class="touch-actions"><button id="fire" aria-label="按住攻击"><span>攻击</span><small>按住连射</small></button><button id="dashButton">冲刺</button></div>
-  </div>
-  <div id="combo" hidden></div>
-  <section id="overlay" aria-label="游戏面板"></section>
-</main>
-<script defer src="action/asset-list.js"></script>
-<script defer src="action/assets.js"></script>
-<script defer src="action/audio.js"></script>
-<script defer src="action/framework.js"></script>
-<script defer src="action/food-knowledge.js"></script>
-<script defer src="action/nutrition-data.js"></script>
-<script defer src="action/game.js"></script>
-<script defer src="action/render.js"></script>
-<script defer src="action/ui.js"></script>
-<script defer src="action/mc-render.js"></script>
-<script defer src="action/nutrition.js"></script>
-<script defer src="action/v6.js"></script>
-<script defer src="action/presentation.js"></script>
+   </a>
+   <a class="game canteen" href="./games/card/index.html">
+    <div class="cover" aria-hidden="true">
+     <span class="food-card"><img src="./games/card/assets/bread.png" alt="" width="39" height="39"></span>
+     <span class="food-card"><img src="./games/card/assets/carrot.png" alt="" width="45" height="45"></span>
+     <span class="food-card"><img src="./games/card/assets/cooked_salmon.png" alt="" width="39" height="39"></span>
+    </div>
+    <div class="info">
+     <span class="format">回合制 · 膳食卡牌</span>
+     <h2>方块食堂</h2>
+     <p>规划每回合的出牌顺序，用食材组合自动合成配方。</p>
+     <strong>进入食堂 <span aria-hidden="true">→</span></strong>
+    </div>
+   </a>
+  </nav>
+  <p class="mobile-note">《方块突围》在手机上自动按横向显示，锁定竖屏也可以玩。</p>
+ </main>
 </body>
 </html>
-

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#182921">
+	<title>方块食堂 · 膳食卡牌</title>
+	<link rel="icon" href="./assets/crafting_table_top.png" type="image/png">
+	<link rel="stylesheet" href="./style.css">
+	<script defer src="./game.js"></script>
+</head>
+<body>
+	<header class="topbar">
+		<a class="brand" href="./index.html"><img src="./assets/crafting_table_top.png" alt="">方块食堂</a>
+		<nav aria-label="图鉴和地图">
+			<a class="hub-return" href="../../index.html">游戏大厅</a>
+			<button type="button" data-book="recipes">配方册</button>
+			<button type="button" data-book="map">路线</button>
+			<button type="button" data-book="deck">牌库</button>
+		</nav>
+	</header>
+	<main id="app"></main>
+	<div id="hint-panel" class="hint-panel" aria-hidden="true" hidden></div>
+	<p id="battle-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+	<dialog id="book" aria-labelledby="book-title">
+		<header><h2 id="book-title"></h2><form method="dialog"><button type="submit">关闭</button></form></header>
+		<div id="book-body"></div>
+	</dialog>
+	<footer class="footer">
+		<span>膳食卡牌试玩 · 非 Minecraft 官方作品</span>
+		<a href="https://github.com/tianliang-0329/block-survival-nutrition/tree/main/games/card">游戏源码与许可</a>
+		<button type="button" data-book="sources">科普与素材来源</button>
+	</footer>
+	<noscript>请在浏览器中启用 JavaScript 以进入游戏。</noscript>
+</body>
+</html>
