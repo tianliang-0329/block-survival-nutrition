@@ -477,3 +477,43 @@ dialog .map-stop { color: #3c4839; }
  .topbar nav{flex-wrap:wrap}
  .footer{flex-wrap:wrap}
 }
+[data-sound][aria-pressed="false"]{opacity:.68}
+.tactic-panel{
+ display:grid;gap:6px;margin:8px 2px;padding:8px;
+ color:#253125;background:#d4d6c7;border:2px solid #6d7868;border-top-color:#f0efd9
+}
+.tactic-title{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.tactic-title span,.tactic-panel p{font-size:.78rem;color:#3d4e3e}
+.tactic-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.tactic-buttons button{
+ min-width:0;min-height:47px;padding:5px 4px;background:#40584b;color:#f8f5da;
+ border:2px solid #657d64;border-right-color:#26392e;border-bottom-color:#26392e;
+ line-height:1.15;display:grid;place-content:center;justify-items:center;gap:3px
+}
+.tactic-buttons small{font-size:.65rem;color:#e1edcc}
+.tactic-buttons button:disabled{opacity:.52;cursor:default}
+.tactic-buttons button[aria-pressed="true"]{background:#754e28}
+.tactic-panel.choosing{border-color:#b17e39;background:#ede3c2}
+.reserve-select .food-card{outline:2px dashed #f2c477;outline-offset:-4px}
+.intent b.countered{color:#194524;background:#d0ebba;border-color:#719d6b}
+
+.counter-strip{
+	display:flex;align-items:center;flex-wrap:wrap;gap:5px 10px;
+	margin-top:8px;padding:6px 9px;border:1px solid #ae8555;
+	background:#35291d;color:#ffe2af;font-size:.85rem
+}
+.counter-strip strong{border-right:1px solid currentColor;padding-right:8px}
+.counter-strip span b{margin-left:3px;font-variant-numeric:tabular-nums}
+.counter-strip small{margin-left:auto}
+.counter-strip.counter-done{background:#243c2a;color:#dfefbf;border-color:#94b27c}
+.challenge-note{margin-top:8px;font-size:.84rem;color:var(--muted)}
+@media(max-width:480px){
+	.tactic-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
+	.counter-strip{font-size:.75rem;gap:4px 7px}
+	.counter-strip small{margin-left:0}
+}
+@media(max-width:580px){
+ .topbar{flex-wrap:wrap;padding-block:5px}
+ .topbar nav{flex-wrap:wrap}
+ .tactic-buttons small{font-size:.62rem}
+}

@@ -1,11 +1,12 @@
 import {
-	accessibleNodes, campChoice, enemyAt, finishTurn, foodOf, intentFor, newFoodRun, nodeAt,
-	playFood, recipesForPlay, takeReward, trail, travel,
+	accessibleNodes, campChoice, campRecovery, canUseTactic, enemyAt, finishTurn, foodOf, intentFor, newFoodRun, nodeAt,
+	playFood, recipesForPlay, startChallenge, takeReward, trail, travel, useTactic,
 } from './food-run.js'
 import {foodById, foes, groups, recipes, sources} from './pantry.js'
 import {setupHints} from './hints.js'
 import {portrait, waypoints} from './expedition.js'
 import {cardInMotion, flyToTable, reducedMotion} from './card-motion.js'
+import {CanteenSound} from './sound.js'
 
 const app = document.querySelector('#app')
 const dialog = document.querySelector('#book')
@@ -16,6 +17,8 @@ const hints = setupHints(document.querySelector('#hint-panel'))
 let state = newFoodRun()
 let locked = false
 let feedback = {}
+let cardChoice = null
+const sound = new CanteenSound(document.querySelector('[data-sound]'))
 
 const icon = (id, css = '') => `<img class="pixel ${css}" src="./assets/${id}.png" alt="" draggable="false">`
 const btn = (action, name, css = '', id = '') =>
@@ -31,11 +34,12 @@ function hintButton(id, label, text) {
 const hint = (id, label, text) =>
 	`<span class="hint-trigger" data-hint="${id}">${hintButton(id, label, text)}</span>`
 
-function cardView(food, {card, action, disabled = false, ready = []} = {}) {
+function cardView(food, {card, action, disabled = false, ready = [], canInterrupt = false} = {}) {
 	const tag = action ? 'button' : 'article'
 	const attr = action ? `type="button" data-action="${action}" data-id="${card?.id ?? food.id}"` : ''
 	const upgrade = card?.upgraded ? `<small class="upgrade">升级后 ${[card.damage && card.damage + ' 伤害', card.block && card.block + ' 护盾'].filter(Boolean).join(' / ')}</small>` : ''
-	const combo = ready.length ? `<span class="card-ready" title="${ready.map(({name}) => name).join('、')}">可合成${ready.length > 1 ? ' ×' + ready.length : ''}</span>` : ''
+	const readyLabel = canInterrupt ? '可削弱蓄力' : '可合成' + (ready.length > 1 ? ' ×' + ready.length : '')
+	const combo = ready.length ? `<span class="card-ready" title="${ready.map(({name}) => name).join('、')}">${readyLabel}</span>` : ''
 	return `<${tag} class="food-card ${food.group} ${combo ? 'combo-ready' : ''}" ${attr} ${disabled ? 'aria-disabled="true"' : ''}>
 		<span class="card-top"><span class="cost" aria-label="${food.cost} 行动">${food.cost}</span><span class="card-group">${groups[food.group]}</span></span>
 		<span class="card-art">${icon(food.image)}</span>
@@ -72,7 +76,7 @@ function tableView() {
 	const recent = table.cards
 	const isOpening = nodeAt(state).id === 'market' && state.round === 1
 	const didEndTurn = state.round > 1 && recent.length === 0
-	const notableEvent = state.combined || state.repeatTriggered || didEndTurn
+	const notableEvent = state.combined || state.repeatTriggered || table.tactic || didEndTurn
 	const recipeNames = table.recipes.map((id) => recipes.find((recipe) => recipe.id === id).name)
 	const mealMissing = meal.need.filter((group) => !table.groups.includes(group))
 	const missingLabel = mealMissing.length && mealMissing.length < meal.need.length
@@ -132,17 +136,51 @@ function turnControls(intent, down) {
 	</div>`
 }
 
+const counterLabels = {
+	variety: (goal) => '出 ' + goal + ' 类主食、蛋白食材或蔬果',
+	guard: (goal) => '叠到 ' + goal + ' 点护盾',
+	recipe: (goal) => '合成 ' + goal + ' 道配方',
+}
+
+function counterView(counter) {
+	if (!counter) return ''
+	const {kind, target, progress, met, penalty, relief} = counter
+	return `<div class="counter-strip ${met ? 'counter-done' : ''}">
+		<strong>${met ? '已拆招' : '拆招条件'}</strong>
+		<span>${counterLabels[kind](target)} <b>${progress}/${target}</b></span>
+		<small>${met ? '本击伤害 −' + relief : '未完成时伤害 +' + penalty}</small>
+	</div>`
+}
+
+function tacticalPanel(intent) {
+	const choices = [
+		['dampen', '压火', '敌方伤害 −7'],
+		['crack', '去壳', '现有盾 −10 · 预告盾 −6'],
+		['reserve', '留牌', '留一张到下回合'],
+		['swap', '换牌', '弃一张，再摸一张'],
+	]
+	const reserved = state.table.reserved
+	return `<section class="tactic-panel ${cardChoice ? 'choosing' : ''}" aria-label="战术火候">
+		<div class="tactic-title"><b>战术火候</b><span>本场剩 ${state.tacticsLeft} 次 · 每回合一次</span></div>
+		<div class="tactic-buttons">${choices.map(([id, label, detail]) => `<button type="button" data-action="tactic" data-id="${id}"
+			${!canUseTactic(state, id) ? 'disabled' : ''} ${id === 'reserve' || id === 'swap' ? 'aria-pressed="' + (cardChoice === id) + '"' : ''}><strong>${cardChoice === id ? '取消' + label : label}</strong><small>${detail}</small></button>`).join('')}</div>
+		${cardChoice ? '<p role="status">' + (cardChoice === 'swap' ? '点一张手牌弃掉，再摸一张。' : '点一张手牌，留到下回合。') + '</p>' : ''}
+		${reserved ? '<p>已预留：<b>' + reserved.name + '</b></p>' : ''}
+		${!cardChoice && !reserved && intent.interrupt && !intent.interrupted ? '<p>先试着合成配方，可以把火候留到更难的一击。</p>' : ''}
+	</section>`
+}
+
 function battle() {
 	const {id, y} = nodeAt(state)
 	const foe = foes[id]
 	const place = waypoints[id]
 	const enemy = enemyAt(state)
 	const intent = intentFor(state)
-	const base = enemy.intents[enemy.nextIntent]
-	const changed = intent.damage > base.damage
+	const changed = intent.damage - intent.baseDamage
 	const notes = [
-		`<b class="${changed ? 'warn' : ''}">${intent.damage} 伤害${changed ? ` <small>+${intent.damage - base.damage}</small>` : ''}</b>`,
+		`<b class="${changed > 0 ? 'warn' : changed < 0 ? 'countered' : ''}">${intent.damage} 伤害${changed ? ` <small>${changed > 0 ? '+' : ''}${changed}</small>` : ''}</b>`,
 		intent.block ? `<b>${intent.block} 护盾</b>` : '',
+		intent.interrupted ? '<b class="countered">蓄力已削弱</b>' : intent.interrupt ? '<b class="warn">合成可削弱 ' + intent.interrupt + '</b>' : '',
 		intent.energyLoss ? '<b class="warn">下回合 −1 行动</b>' : '',
 		intent.drawLoss ? '<b class="warn">下回合 −1 抽牌</b>' : '',
 	].join('')
@@ -155,7 +193,7 @@ function battle() {
 	return `<section class="arena encounter-${id} ${down ? 'foe-down' : ''}" aria-label="对战">
 		<header class="encounter-header">
 			<div><p class="eyebrow encounter-position">第 ${y} / ${steps} 站 <span class="trail-pips" aria-hidden="true">${pips}</span></p><strong>${place.name}</strong></div>
-			<span class="round-state">第 ${state.round} 回合 <b>${down ? '战斗结束' : '你的回合'}</b></span>
+			<span class="round-state">${state.challenge ? '挑战 · ' : ''}第 ${state.round} 回合 <b>${down ? '战斗结束' : '你的回合'}</b></span>
 		</header>
 		<div class="battlefield">
 			<div class="fighter player-side">
@@ -179,9 +217,10 @@ function battle() {
 				<div class="enemy-health">${vitality(enemy, foe.name, feedback.foeBefore)}</div>
 			</div>
 		</div>
+		${down ? '' : counterView(intent.counter)}
 		<p class="encounter-story">${place.enter}</p>
 	</section>
-	<div class="inventory-frame">${tableView()}
+	<div class="inventory-frame">${tableView()}${down ? '' : tacticalPanel(intent)}
 	<section class="hand-panel">
 		<div class="hand-header">${energyView()}<div class="pile-info"><h2>手牌</h2>
 			<small>抽牌 ${state.drawPile.length} · 弃牌 ${state.discardPile.length}${state.exhaustPile.length ? ` · 消耗 ${state.exhaustPile.length}` : ''}</small>
@@ -189,10 +228,12 @@ function battle() {
 			${turnControls(intent, down)}
 			${recent ? `<small class="hand-feedback">${recent}</small>` : ''}
 		</div>
-		<div class="hand">${state.hand.map((card) => {
+		<div class="hand ${cardChoice ? 'reserve-select' : ''}">${state.hand.map((card) => {
 			const food = foodOf(card)
-			const disabled = card.energy > state.player.currentEnergy
-			return cardView(food, {action: 'play', card, disabled, ready: disabled || down ? [] : recipesForPlay(state.table, food)})
+			const disabled = !cardChoice && card.energy > state.player.currentEnergy
+			return cardView(food, {action: cardChoice || 'play', card, disabled,
+				ready: disabled || down || cardChoice ? [] : recipesForPlay(state.table, food),
+				canInterrupt: !!intent.interrupt && !intent.interrupted})
 		}).join('') || '<p>手牌已打完，可以结束回合。</p>'}</div>
 	</section></div>`
 }
@@ -201,10 +242,11 @@ function intro() {
 	return `<section class="hero">
 		<div class="hero-copy"><p class="eyebrow">炊火营地 · 膳食卡牌远征</p>
 		<h1>方块食堂</h1>
-		<p class="hero-hook">“If it’s not in Minecraft, don’t eat it.”</p>
 		<p class="hero-text">营地今晚还没开饭。带上食材牌，闯过集市和矿道，把一套能搭得起来的晚餐带回炉火边。</p>
 		<div class="hero-actions">${btn('travel', '开局 · 对战零食史莱姆', 'primary', 'market')}
-			${hint('hint-how', '玩法', '点手牌可以出牌，每回合补满行动并抽牌。\n同回合打出搭配的食材，自动合成配方。\n对手会预告下一步，再根据你出了什么牌调整。')}</div></div>
+			${btn('challenge', '挑战远征', 'turn-button')}
+			${hint('hint-how', '玩法', '先看对手预告，再点手牌。按要求出牌或叠盾可以拆招。\n换牌、留牌、压火和去壳共用战术火候。')}</div>
+		<p class="challenge-note">挑战远征：敌人更强，每场限用一次火候，休息回复更少。</p></div>
 		<div class="hero-media" aria-hidden="true">
 			<div class="hero-traveler">${portrait('player')}${icon('campfire', 'hero-fire')}</div>
 			<div class="hero-rations">${icon('baked_potato')}${icon('cooked_salmon')}${icon('carrot')}</div>
@@ -255,7 +297,7 @@ function route() {
 function camp() {
 	return `<section class="interlude"><p class="eyebrow">第 4 站</p><h1>篝火补给</h1>
 		<p>恢复耐力，或升级一张伤害牌 / 护盾牌。二选一。</p>
-		${btn('rest', '休息 · 恢复 22 点耐力', 'primary')}
+		${btn('rest', '休息 · 恢复 ' + campRecovery(state.challenge) + ' 点耐力', 'primary')}
 		<div class="hand reward-hand">${state.deck.filter((card) => !card.upgraded && (card.damage || card.block))
 			.map((card) => cardView(foodOf(card), {card, action: 'upgrade'})).join('')}</div></section>`
 }
@@ -265,7 +307,7 @@ function finalScreen() {
 	return `<section class="interlude"><p class="eyebrow">${win ? '闯关成功' : '耐力耗尽'}</p>
 		<h1>${win ? '晚餐带回来了' : '回营地再备一餐'}</h1>
 		<p>${win ? waypoints.boss.clear : `${waypoints[nodeAt(state).id].name}的路还没打通。回去换一份食材再出发。`}</p>
-		<p>这趟完成了 ${state.crafted} 次配方，过了 ${state.learned.length} 场对战。</p>
+		<p>这趟完成了 ${state.crafted} 次配方、拆了 ${state.countersCleared} 招，过了 ${state.learned.length} 场对战。</p>
 		${btn('restart', '再来一局', 'primary')}
 		${win ? reality('boss') : ''}</section>`
 }
@@ -275,6 +317,9 @@ const views = {intro, fight: battle, reward: rewards, route, camp, win: finalScr
 function render(phase = state.phase) {
 	hints.close()
 	app.innerHTML = views[phase]()
+	sound.setScene(state.phase === 'fight' ? nodeAt(state).id === 'boss'
+		? enemyAt(state).currentHealth <= enemyAt(state).maxHealth / 2 ? 'bossLate' : 'boss' : 'fight'
+		: ['win', 'lost'].includes(state.phase) ? state.phase : 'camp')
 }
 
 function openBook(tab) {
@@ -315,8 +360,13 @@ function animatePlayedCard(flight) {
 function present(next, action, flight) {
 	const previous = state
 	state = next
+	cardChoice = null
 	feedback = {}
 	if (action === 'play') {
+		const after = intentFor(state)
+		const before = intentFor(previous)
+		const interrupted = (after.interrupted && !before.interrupted) || (after.counter?.met && !before.counter?.met)
+		sound.effect(interrupted ? 'interrupt' : state.combined ? 'recipe' : 'play')
 		const foeBefore = enemyAt(previous)
 		feedback.foeBefore = foeBefore.currentHealth
 		feedback.guardGain = Math.max(0, state.player.block - previous.player.block)
@@ -327,12 +377,16 @@ function present(next, action, flight) {
 			state.hit ? '对手耐力减少 ' + state.hit : '',
 			feedback.guardGain ? '你的护盾增加 ' + feedback.guardGain : '',
 		].filter(Boolean).join('。')
+	} else if (action === 'tactic' || action === 'reserve' || action === 'swap') {
+		sound.effect('tactic')
+		announcer.textContent = state.message
 	} else if (action === 'end') {
 		feedback.playerBefore = previous.player.currentHealth
 		feedback.loss = Math.max(0, previous.player.currentHealth - state.player.currentHealth)
 		feedback.blocked = Math.min(previous.player.block, intentFor(previous).damage)
 		announcer.textContent = state.phase === 'lost' ? '耐力耗尽。' : state.message + '第 ' + state.round + ' 回合。'
 	} else {
+		if (action === 'travel' || action === 'reward' || action === 'challenge') sound.effect(action === 'challenge' ? 'travel' : action)
 		announcer.textContent = ''
 	}
 
@@ -363,6 +417,7 @@ function present(next, action, flight) {
 }
 
 function animateEnemyTurn(next) {
+	sound.effect('enemy')
 	if (reducedMotion()) {
 		present(next, 'end')
 		return
@@ -385,13 +440,27 @@ function animateEnemyTurn(next) {
 }
 
 document.addEventListener('click', (event) => {
+	if (event.target.closest('[data-sound]')) {
+		sound.toggle()
+		return
+	}
+	sound.unlock()
 	const book = event.target.closest('[data-book]')
 	if (book) openBook(book.dataset.book)
 	const button = event.target.closest('[data-action]')
 	if (!button || locked || button.getAttribute('aria-disabled') === 'true') return
 	const {action, id} = button.dataset
+	if (action === 'tactic' && (id === 'reserve' || id === 'swap')) {
+		if (!canUseTactic(state, id)) return
+		cardChoice = cardChoice === id ? null : id
+		render()
+		app.querySelector(cardChoice ? `[data-action="${cardChoice}"]` : `[data-action="tactic"][data-id="${id}"]`)?.focus({preventScroll: true})
+		return
+	}
 	const transitions = {
-		travel: () => travel(state, id), play: () => playFood(state, id),
+		travel: () => travel(state, id), challenge: () => startChallenge(state), play: () => playFood(state, id),
+		tactic: () => useTactic(state, id), reserve: () => useTactic(state, 'reserve', id),
+		swap: () => useTactic(state, 'swap', id),
 		end: () => finishTurn(state), reward: () => takeReward(state, id),
 		rest: () => campChoice(state, 'rest'), upgrade: () => campChoice(state, 'upgrade', id),
 		restart: newFoodRun,

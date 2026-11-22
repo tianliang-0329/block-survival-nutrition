@@ -43,13 +43,16 @@ export function upgradeFood(card) {
 	}
 }
 
-function makeTrail() {
+export const campRecovery = (challenge) => challenge ? 16 : 22
+
+function makeTrail(challenge) {
 	const graph = trail.map((floor, y) => floor.map((entry, x) => {
 		let room = StartRoom()
 		if (entry.id === 'camp') room = CampfireRoom()
 		const foe = foes[entry.id]
 		if (foe) room = MonsterRoom(Monster({
-			name: foe.name, hp: foe.hp, block: foe.block, intents: foe.pattern,
+			name: foe.name, hp: challenge ? Math.round(foe.hp * 1.2) : foe.hp,
+			block: foe.block, intents: foe.pattern,
 		}))
 		return {...entry, x, y, room, type: room.type, edges: entry.next, didVisit: y === 0}
 	}))
@@ -59,13 +62,13 @@ function makeTrail() {
 export const nodeAt = (state) => state.dungeon.graph[state.dungeon.y][state.dungeon.x]
 export const enemyAt = (state) => getCurrRoom(state).monsters?.[0]
 export const foodOf = (card) => foodById[card.foodId]
-export const emptyTable = () => ({groups: [], cards: [], recipes: [], prep: 0, repeat: false})
+export const emptyTable = () => ({groups: [], cards: [], recipes: [], prep: 0, repeat: false, tactic: null, reserved: null})
 
-export function newFoodRun() {
-	const state = actions.setDungeon(actions.createNewState(), makeTrail())
+export function newFoodRun(challenge = false) {
+	const state = actions.setDungeon(actions.createNewState(), makeTrail(challenge))
 	return {
-		...state, deck: starter.map(makeFood), phase: 'intro',
-		table: emptyTable(), round: 1, rewards: [], learned: [], crafted: 0,
+		...state, deck: starter.map(makeFood), phase: 'intro', challenge,
+		table: emptyTable(), round: 1, rewards: [], learned: [], crafted: 0, countersCleared: 0,
 		message: '把食材带进工作台，试试能配出什么。',
 	}
 }
@@ -87,9 +90,14 @@ export function travel(state, id) {
 	if (id === 'web') next = actions.addCardToHand(next, {card: makeFood('water')})
 	return {
 		...next, phase: node.room.type === 'campfire' ? 'camp' : 'fight',
-		round: 1, rewards: [], table: emptyTable(), hit: 0, combined: false, repeatTriggered: false,
+		round: 1, rewards: [], table: emptyTable(), tacticsLeft: state.challenge ? 1 : 2,
+		hit: 0, combined: false, repeatTriggered: false,
 		message: '',
 	}
+}
+
+export function startChallenge(state) {
+	return state.phase === 'intro' ? travel(newFoodRun(true), 'market') : state
 }
 
 function tally(cards, group) {
@@ -104,7 +112,10 @@ function isBossSecondPhase(state) {
 export function intentFor(state) {
 	const enemy = enemyAt(state)
 	const {id} = nodeAt(state)
-	const intent = {...enemy.intents[enemy.nextIntent]}
+	const pattern = isBossSecondPhase(state) ? foes[id].enraged : enemy.intents
+	const intent = {...pattern[enemy.nextIntent]}
+	if (state.challenge && intent.damage > 0) intent.damage += 3
+	intent.baseDamage = intent.damage
 	const {table} = state
 	const sweets = tally(table.cards, 'treat')
 	if (id === 'market' && sweets > 0 && sweets === table.cards.length) intent.damage += 6
@@ -112,8 +123,63 @@ export function intentFor(state) {
 	if (id === 'web' && !table.recipes.includes('field')) intent.drawLoss = 1
 	if (id === 'caries' && sweets > 1) intent.damage += 7 * (sweets - 1)
 	if (id === 'pressure') intent.damage += 3 * (state.round - 1)
-	if (id === 'boss' && isBossSecondPhase(state) && table.recipes.length === 0) intent.damage += 9
+	if (id === 'boss' && isBossSecondPhase(state) && table.recipes.length === 0) intent.damage += 7
+	if (intent.interrupt && table.recipes.length) {
+		intent.damage = Math.max(0, intent.damage - intent.interrupt)
+		intent.interrupted = true
+	}
+	if (intent.counter) {
+		const {kind, target, penalty, relief} = intent.counter
+		const progress = kind === 'guard' ? state.player.block
+			: kind === 'recipe' ? table.recipes.length
+			: table.groups.filter((group) => ['staple', 'protein', 'plant'].includes(group)).length
+		const met = progress >= target
+		intent.counter = {...intent.counter, progress: Math.min(progress, target), met}
+		intent.damage = Math.max(0, intent.damage + (met ? -relief : penalty))
+	}
+	if (table.tactic === 'dampen') intent.damage = Math.max(0, intent.damage - 7)
+	if (table.tactic === 'crack') intent.block = Math.max(0, (intent.block ?? 0) - 6)
 	return intent
+}
+
+export function canUseTactic(state, tactic) {
+	if (state.phase !== 'fight' || !state.tacticsLeft || state.table.tactic) return false
+	if (tactic === 'dampen') return intentFor(state).damage > 0
+	if (tactic === 'crack') return enemyAt(state).block > 0 || (intentFor(state).block ?? 0) > 0
+	if (!state.hand.length) return false
+	if (tactic === 'swap') return state.drawPile.length + state.discardPile.length > 0
+	return tactic === 'reserve'
+}
+
+export function useTactic(state, tactic, uid) {
+	if (!canUseTactic(state, tactic)) return state
+	const selectsCard = tactic === 'reserve' || tactic === 'swap'
+	const selected = selectsCard ? state.hand.find((card) => card.id === uid) : null
+	if (selectsCard && !selected) return state
+	// Draw first so the card being swapped cannot be immediately redrawn.
+	const next = tactic === 'swap' ? actions.drawCards(state, {amount: 1}) : state
+	return produce(next, (draft) => {
+		draft.tacticsLeft--
+		draft.table.tactic = tactic
+		draft.hit = 0
+		draft.combined = false
+		draft.repeatTriggered = false
+		if (tactic === 'crack') {
+			const enemy = enemyAt(draft)
+			enemy.block = Math.max(0, enemy.block - 10)
+			draft.message = '去壳：对手现有护盾减少，预告中的护盾也会降低。'
+		} else if (tactic === 'dampen') {
+			draft.message = '压火：对手本回合的伤害最多降低 7 点。'
+		} else if (tactic === 'swap') {
+			draft.hand = draft.hand.filter((card) => card.id !== uid)
+			draft.discardPile.push(selected)
+			draft.message = '已用 ' + selected.name + ' 换来一张新牌。'
+		} else {
+			draft.table.reserved = selected
+			draft.hand = draft.hand.filter((card) => card.id !== uid)
+			draft.message = '已留好 ' + selected.name + '，下回合回到手里。'
+		}
+	})
 }
 
 function adjustEnemy(state, change) {
@@ -172,6 +238,7 @@ export function playFood(state, uid) {
 		})
 	}
 	const chain = {
+		...table,
 		groups: [...new Set([...table.groups, food.group])],
 		cards: [...table.cards, food.id],
 		recipes: [...table.recipes],
@@ -209,7 +276,7 @@ export function playFood(state, uid) {
 export function finishTurn(state) {
 	if (state.phase !== 'fight') return state
 	const enemy = enemyAt(state)
-	const {damage, block, energyLoss, drawLoss} = intentFor(state)
+	const {damage, block, energyLoss, drawLoss, counter} = intentFor(state)
 	const index = enemy.nextIntent
 	const baseIntent = enemy.intents[index]
 	const withIntent = adjustEnemy(state, (draft) => {
@@ -222,6 +289,7 @@ export function finishTurn(state) {
 		next = produce(next, (draft) => {draft.drawPile.unshift(draft.hand.pop())})
 	}
 	if (state.table.prep) next = actions.drawCards(next, {amount: state.table.prep})
+	if (state.table.reserved) next = actions.addCardToHand(next, {card: state.table.reserved})
 	const loss = Math.max(0, state.player.currentHealth - next.player.currentHealth)
 	return produce(next, (draft) => {
 		draft.table = emptyTable()
@@ -233,6 +301,10 @@ export function finishTurn(state) {
 		draft.message = loss ? '上一击消耗了 ' + loss + ' 点耐力。' : '挡住了上一击。'
 		if (energyLoss) draft.message += ' 迟到幻影扣除 1 行动。'
 		if (drawLoss) draft.message += ' 黏网让你少抽了 1 张。'
+		if (counter) {
+			if (counter.met) draft.countersCleared++
+			draft.message += counter.met ? ' 拆招成功。' : ' 未拆招，对手加强了攻击。'
+		}
 	})
 }
 
@@ -245,7 +317,7 @@ export function takeReward(state, id) {
 export function campChoice(state, choice, uid) {
 	if (state.phase !== 'camp') return state
 	if (choice === 'rest') {
-		const next = actions.addHealth(state, {target: 'player', amount: 22})
+		const next = actions.addHealth(state, {target: 'player', amount: campRecovery(state.challenge)})
 		return {...next, phase: 'route'}
 	}
 	if (choice === 'upgrade') {

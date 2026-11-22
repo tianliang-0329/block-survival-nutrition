@@ -51,53 +51,80 @@ export const sources = {
 	fiber: ['美国 NIDDK · 便秘与饮食', 'https://www.niddk.nih.gov/health-information/digestive-diseases/constipation/eating-diet-nutrition'],
 }
 
+const counter = (kind, target, penalty, relief) => ({kind, target, penalty, relief})
+
 export const foes = {
 	market: {
-		name: '零食史莱姆', image: 'slime_ball', track: '零食替正餐', hp: 43,
-		pattern: [{damage: 9, label: '弹跳'}, {damage: 11, label: '再来一份'}],
-		rule: '本回合若只出甜点，下一击额外造成 6 点伤害。',
+		name: '零食史莱姆', image: 'slime_ball', track: '零食替正餐', hp: 62,
+		pattern: [
+			{damage: 10, label: '试探弹跳', counter: counter('variety', 2, 4, 3)},
+			{damage: 14, block: 6, label: '分裂护壳', counter: counter('guard', 8, 4, 2)},
+			{damage: 21, interrupt: 8, label: '蓄力重压'},
+		],
+		rule: '只出甜点时额外造成 6 伤害。遇到蓄力重压，合成任意配方可以削弱它。',
 		note: '零食也可以出现在日常饮食里。长期把甜点当作正餐，会挤占其他食物的位置。', source: 'diet',
 	},
 	breakfast: {
-		name: '迟到幻影', image: 'clock_00', track: '赶课漏餐', hp: 55,
-		pattern: [{damage: 9, label: '铃声响起'}, {damage: 16, label: '赶课冲刺'}],
+		name: '迟到幻影', image: 'clock_00', track: '赶课漏餐', hp: 61,
+		pattern: [
+			{damage: 11, label: '铃声响起', counter: counter('variety', 2, 4, 3)},
+			{damage: 17, label: '赶课冲刺', counter: counter('guard', 8, 5, 3)},
+		],
 		rule: '本回合没出主食时，下回合少 1 行动。铺主食可关掉这一意图。',
 		note: '早课可以提前准备多种食物搭配。主食、蛋白食物和蔬果是便于记住的选餐思路。', source: 'diet',
 	},
 	repeat: {
-		name: '单格末影卫', image: 'ender_eye', track: '每天只吃同一套', hp: 56,
-		pattern: [{damage: 10, label: '盯上背包'}, {damage: 13, label: '单格复制'}],
+		name: '单格末影卫', image: 'ender_eye', track: '每天只吃同一套', hp: 64,
+		pattern: [
+			{damage: 12, label: '盯上背包', counter: counter('variety', 3, 5, 4)},
+			{damage: 15, label: '单格复制', counter: counter('recipe', 1, 4, 3)},
+		],
 		rule: '每回合首次打出重复类别时，它先获得 9 点护盾。混着打或用组合伤害破盾。',
 		note: '多样化要看一段时间的饮食。轮换食物有助于摄入不同营养素。', source: 'diet',
 	},
 	web: {
-		name: '黏网爬蛛', image: 'string', track: '膳食纤维摄入不足', hp: 63,
-		pattern: [{damage: 12, label: '缠网'}, {damage: 14, label: '收紧'}],
+		name: '黏网爬蛛', image: 'string', track: '膳食纤维摄入不足', hp: 68,
+		pattern: [{damage: 13, label: '缠网'}, {damage: 16, label: '收紧', counter: counter('guard', 8, 5, 4)}],
 		rule: '回合结束时，若没同时打出蔬果与白水，下回合少抽 1 张。每场还能额外获得一瓶白水。',
 		note: '全谷物、豆类、蔬果都可以提供膳食纤维。摄入足量膳食纤维和液体，有助于预防或缓解部分便秘。', source: 'fiber',
 	},
 	salt: {
-		name: '盐壳矿卫', image: 'quartz', track: '长期高钠饮食', hp: 65, block: 14,
-		pattern: [{damage: 10, block: 12, label: '盐壳再生'}, {damage: 15, block: 7, label: '矿镐重击'}],
+		name: '盐壳矿卫', image: 'quartz', track: '长期高钠饮食', hp: 72, block: 14,
+		pattern: [
+			{damage: 12, block: 12, label: '盐壳再生', counter: counter('recipe', 1, 5, 4)},
+			{damage: 20, block: 7, interrupt: 8, label: '矿镐蓄力'},
+		],
 		rule: '开局与行动后均有护盾。触发任意工作台配方时，先清掉现有盐壳，再结算配方。',
 		note: '长期摄入过多钠会升高血压，增加心血管疾病风险。可以留意高钠调味料和加工食品的标签。', source: 'salt',
 	},
 	caries: {
 		name: '龋齿警报', image: 'sugar', track: '频繁接触游离糖', hp: 68,
-		pattern: [{damage: 10, label: '警报闪烁'}, {damage: 16, label: '二次警报'}],
+		pattern: [
+			{damage: 12, label: '警报闪烁', counter: counter('variety', 2, 5, 3)},
+			{damage: 17, label: '二次警报', counter: counter('guard', 10, 5, 3)},
+		],
 		rule: '同回合每打出第 2 张及之后的甜点，下一击就额外造成 7 点伤害。',
 		note: '龋病涉及多个因素，减少游离糖暴露有助于降低风险。游戏中的回合和出牌次数仅用于表现节奏。', source: 'sugar',
 	},
 	pressure: {
 		name: '血压警报', image: 'redstone', track: '盐壳矿道 · 高血压风险', hp: 74,
-		pattern: [{damage: 9, block: 8, label: '红石读数'}, {damage: 13, label: '报警'}],
+		pattern: [{damage: 10, block: 8, label: '红石读数'}, {damage: 15, label: '报警', counter: counter('recipe', 1, 6, 4)}],
 		rule: '每多拖一回合，后续攻击都增加 3 点伤害。护盾只能挡当前一击，尽早接上配方。',
 		note: '长期高钠饮食只是高血压的多个风险因素之一。现实中的血压需通过规范测量判断。游戏里的警报读数是回合计数。', source: 'salt',
 	},
 	boss: {
-		name: '满格幻象', image: 'golden_apple', track: '终局 · 饱食满格的迷思', hp: 98, block: 8,
-		pattern: [{damage: 12, label: '饱食刻度'}, {damage: 17, label: '金光反射'}],
-		rule: '上半场每回合首个重复类别给它 9 护盾。血量降至一半后，回合内若没触发任何配方，下一击额外造成 9 伤害。',
+		name: '满格幻象', image: 'golden_apple', track: '终局 · 饱食满格的迷思', hp: 138, block: 12,
+		pattern: [
+			{damage: 14, label: '饱食刻度', counter: counter('variety', 3, 5, 4)},
+			{damage: 12, block: 12, label: '金光护壳', counter: counter('guard', 10, 6, 3)},
+			{damage: 23, interrupt: 8, label: '蓄力扫击'},
+		],
+		enraged: [
+			{damage: 20, label: '过载冲击', counter: counter('recipe', 1, 7, 5)},
+			{damage: 15, block: 10, label: '光幕回护', counter: counter('guard', 12, 6, 4)},
+			{damage: 27, interrupt: 10, label: '满格蓄力'},
+		],
+		rule: '上半场首个重复类别给它 9 护盾。半血后攻势升级，没合成配方时额外造成 7 伤害。蓄力回合可用配方削弱。',
 		note: '饱腹感和膳食多样性是不同的概念。把视野拉到一段时间，看食物搭配和习惯。', source: 'diet',
 	},
 }

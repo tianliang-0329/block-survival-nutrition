@@ -6,7 +6,7 @@
       __defProp(target, name, { get: all[name], enumerable: true });
   };
 
-  // ../../work/slaytheweb-diet-upstream/node_modules/immer/dist/immer.mjs
+  // node_modules/immer/dist/immer.mjs
   var NOTHING = /* @__PURE__ */ Symbol.for("immer-nothing");
   var DRAFTABLE = /* @__PURE__ */ Symbol.for("immer-draftable");
   var DRAFT_STATE = /* @__PURE__ */ Symbol.for("immer-state");
@@ -2434,14 +2434,14 @@
   var actions_default = allActions;
 
   // src/pantry.js
-  var food = (id, name, image, group, cost, text, effects = {}) => ({
+  var food = (id, name, image, group, cost, text, effects2 = {}) => ({
     id,
     name,
     image,
     group,
     cost,
     text,
-    ...effects
+    ...effects2
   });
   var groups = {
     staple: "\u4E3B\u98DF",
@@ -2536,14 +2536,19 @@
     salt: ["\u4E16\u536B\u7EC4\u7EC7 \xB7 \u51CF\u94A0", "https://www.who.int/news-room/fact-sheets/detail/sodium-reduction"],
     fiber: ["\u7F8E\u56FD NIDDK \xB7 \u4FBF\u79D8\u4E0E\u996E\u98DF", "https://www.niddk.nih.gov/health-information/digestive-diseases/constipation/eating-diet-nutrition"]
   };
+  var counter = (kind, target, penalty, relief) => ({ kind, target, penalty, relief });
   var foes = {
     market: {
       name: "\u96F6\u98DF\u53F2\u83B1\u59C6",
       image: "slime_ball",
       track: "\u96F6\u98DF\u66FF\u6B63\u9910",
-      hp: 43,
-      pattern: [{ damage: 9, label: "\u5F39\u8DF3" }, { damage: 11, label: "\u518D\u6765\u4E00\u4EFD" }],
-      rule: "\u672C\u56DE\u5408\u82E5\u53EA\u51FA\u751C\u70B9\uFF0C\u4E0B\u4E00\u51FB\u989D\u5916\u9020\u6210 6 \u70B9\u4F24\u5BB3\u3002",
+      hp: 62,
+      pattern: [
+        { damage: 10, label: "\u8BD5\u63A2\u5F39\u8DF3", counter: counter("variety", 2, 4, 3) },
+        { damage: 14, block: 6, label: "\u5206\u88C2\u62A4\u58F3", counter: counter("guard", 8, 4, 2) },
+        { damage: 21, interrupt: 8, label: "\u84C4\u529B\u91CD\u538B" }
+      ],
+      rule: "\u53EA\u51FA\u751C\u70B9\u65F6\u989D\u5916\u9020\u6210 6 \u4F24\u5BB3\u3002\u9047\u5230\u84C4\u529B\u91CD\u538B\uFF0C\u5408\u6210\u4EFB\u610F\u914D\u65B9\u53EF\u4EE5\u524A\u5F31\u5B83\u3002",
       note: "\u96F6\u98DF\u4E5F\u53EF\u4EE5\u51FA\u73B0\u5728\u65E5\u5E38\u996E\u98DF\u91CC\u3002\u957F\u671F\u628A\u751C\u70B9\u5F53\u4F5C\u6B63\u9910\uFF0C\u4F1A\u6324\u5360\u5176\u4ED6\u98DF\u7269\u7684\u4F4D\u7F6E\u3002",
       source: "diet"
     },
@@ -2551,8 +2556,11 @@
       name: "\u8FDF\u5230\u5E7B\u5F71",
       image: "clock_00",
       track: "\u8D76\u8BFE\u6F0F\u9910",
-      hp: 55,
-      pattern: [{ damage: 9, label: "\u94C3\u58F0\u54CD\u8D77" }, { damage: 16, label: "\u8D76\u8BFE\u51B2\u523A" }],
+      hp: 61,
+      pattern: [
+        { damage: 11, label: "\u94C3\u58F0\u54CD\u8D77", counter: counter("variety", 2, 4, 3) },
+        { damage: 17, label: "\u8D76\u8BFE\u51B2\u523A", counter: counter("guard", 8, 5, 3) }
+      ],
       rule: "\u672C\u56DE\u5408\u6CA1\u51FA\u4E3B\u98DF\u65F6\uFF0C\u4E0B\u56DE\u5408\u5C11 1 \u884C\u52A8\u3002\u94FA\u4E3B\u98DF\u53EF\u5173\u6389\u8FD9\u4E00\u610F\u56FE\u3002",
       note: "\u65E9\u8BFE\u53EF\u4EE5\u63D0\u524D\u51C6\u5907\u591A\u79CD\u98DF\u7269\u642D\u914D\u3002\u4E3B\u98DF\u3001\u86CB\u767D\u98DF\u7269\u548C\u852C\u679C\u662F\u4FBF\u4E8E\u8BB0\u4F4F\u7684\u9009\u9910\u601D\u8DEF\u3002",
       source: "diet"
@@ -2561,8 +2569,11 @@
       name: "\u5355\u683C\u672B\u5F71\u536B",
       image: "ender_eye",
       track: "\u6BCF\u5929\u53EA\u5403\u540C\u4E00\u5957",
-      hp: 56,
-      pattern: [{ damage: 10, label: "\u76EF\u4E0A\u80CC\u5305" }, { damage: 13, label: "\u5355\u683C\u590D\u5236" }],
+      hp: 64,
+      pattern: [
+        { damage: 12, label: "\u76EF\u4E0A\u80CC\u5305", counter: counter("variety", 3, 5, 4) },
+        { damage: 15, label: "\u5355\u683C\u590D\u5236", counter: counter("recipe", 1, 4, 3) }
+      ],
       rule: "\u6BCF\u56DE\u5408\u9996\u6B21\u6253\u51FA\u91CD\u590D\u7C7B\u522B\u65F6\uFF0C\u5B83\u5148\u83B7\u5F97 9 \u70B9\u62A4\u76FE\u3002\u6DF7\u7740\u6253\u6216\u7528\u7EC4\u5408\u4F24\u5BB3\u7834\u76FE\u3002",
       note: "\u591A\u6837\u5316\u8981\u770B\u4E00\u6BB5\u65F6\u95F4\u7684\u996E\u98DF\u3002\u8F6E\u6362\u98DF\u7269\u6709\u52A9\u4E8E\u6444\u5165\u4E0D\u540C\u8425\u517B\u7D20\u3002",
       source: "diet"
@@ -2571,8 +2582,8 @@
       name: "\u9ECF\u7F51\u722C\u86DB",
       image: "string",
       track: "\u81B3\u98DF\u7EA4\u7EF4\u6444\u5165\u4E0D\u8DB3",
-      hp: 63,
-      pattern: [{ damage: 12, label: "\u7F20\u7F51" }, { damage: 14, label: "\u6536\u7D27" }],
+      hp: 68,
+      pattern: [{ damage: 13, label: "\u7F20\u7F51" }, { damage: 16, label: "\u6536\u7D27", counter: counter("guard", 8, 5, 4) }],
       rule: "\u56DE\u5408\u7ED3\u675F\u65F6\uFF0C\u82E5\u6CA1\u540C\u65F6\u6253\u51FA\u852C\u679C\u4E0E\u767D\u6C34\uFF0C\u4E0B\u56DE\u5408\u5C11\u62BD 1 \u5F20\u3002\u6BCF\u573A\u8FD8\u80FD\u989D\u5916\u83B7\u5F97\u4E00\u74F6\u767D\u6C34\u3002",
       note: "\u5168\u8C37\u7269\u3001\u8C46\u7C7B\u3001\u852C\u679C\u90FD\u53EF\u4EE5\u63D0\u4F9B\u81B3\u98DF\u7EA4\u7EF4\u3002\u6444\u5165\u8DB3\u91CF\u81B3\u98DF\u7EA4\u7EF4\u548C\u6DB2\u4F53\uFF0C\u6709\u52A9\u4E8E\u9884\u9632\u6216\u7F13\u89E3\u90E8\u5206\u4FBF\u79D8\u3002",
       source: "fiber"
@@ -2581,9 +2592,12 @@
       name: "\u76D0\u58F3\u77FF\u536B",
       image: "quartz",
       track: "\u957F\u671F\u9AD8\u94A0\u996E\u98DF",
-      hp: 65,
+      hp: 72,
       block: 14,
-      pattern: [{ damage: 10, block: 12, label: "\u76D0\u58F3\u518D\u751F" }, { damage: 15, block: 7, label: "\u77FF\u9550\u91CD\u51FB" }],
+      pattern: [
+        { damage: 12, block: 12, label: "\u76D0\u58F3\u518D\u751F", counter: counter("recipe", 1, 5, 4) },
+        { damage: 20, block: 7, interrupt: 8, label: "\u77FF\u9550\u84C4\u529B" }
+      ],
       rule: "\u5F00\u5C40\u4E0E\u884C\u52A8\u540E\u5747\u6709\u62A4\u76FE\u3002\u89E6\u53D1\u4EFB\u610F\u5DE5\u4F5C\u53F0\u914D\u65B9\u65F6\uFF0C\u5148\u6E05\u6389\u73B0\u6709\u76D0\u58F3\uFF0C\u518D\u7ED3\u7B97\u914D\u65B9\u3002",
       note: "\u957F\u671F\u6444\u5165\u8FC7\u591A\u94A0\u4F1A\u5347\u9AD8\u8840\u538B\uFF0C\u589E\u52A0\u5FC3\u8840\u7BA1\u75BE\u75C5\u98CE\u9669\u3002\u53EF\u4EE5\u7559\u610F\u9AD8\u94A0\u8C03\u5473\u6599\u548C\u52A0\u5DE5\u98DF\u54C1\u7684\u6807\u7B7E\u3002",
       source: "salt"
@@ -2593,7 +2607,10 @@
       image: "sugar",
       track: "\u9891\u7E41\u63A5\u89E6\u6E38\u79BB\u7CD6",
       hp: 68,
-      pattern: [{ damage: 10, label: "\u8B66\u62A5\u95EA\u70C1" }, { damage: 16, label: "\u4E8C\u6B21\u8B66\u62A5" }],
+      pattern: [
+        { damage: 12, label: "\u8B66\u62A5\u95EA\u70C1", counter: counter("variety", 2, 5, 3) },
+        { damage: 17, label: "\u4E8C\u6B21\u8B66\u62A5", counter: counter("guard", 10, 5, 3) }
+      ],
       rule: "\u540C\u56DE\u5408\u6BCF\u6253\u51FA\u7B2C 2 \u5F20\u53CA\u4E4B\u540E\u7684\u751C\u70B9\uFF0C\u4E0B\u4E00\u51FB\u5C31\u989D\u5916\u9020\u6210 7 \u70B9\u4F24\u5BB3\u3002",
       note: "\u9F8B\u75C5\u6D89\u53CA\u591A\u4E2A\u56E0\u7D20\uFF0C\u51CF\u5C11\u6E38\u79BB\u7CD6\u66B4\u9732\u6709\u52A9\u4E8E\u964D\u4F4E\u98CE\u9669\u3002\u6E38\u620F\u4E2D\u7684\u56DE\u5408\u548C\u51FA\u724C\u6B21\u6570\u4EC5\u7528\u4E8E\u8868\u73B0\u8282\u594F\u3002",
       source: "sugar"
@@ -2603,7 +2620,7 @@
       image: "redstone",
       track: "\u76D0\u58F3\u77FF\u9053 \xB7 \u9AD8\u8840\u538B\u98CE\u9669",
       hp: 74,
-      pattern: [{ damage: 9, block: 8, label: "\u7EA2\u77F3\u8BFB\u6570" }, { damage: 13, label: "\u62A5\u8B66" }],
+      pattern: [{ damage: 10, block: 8, label: "\u7EA2\u77F3\u8BFB\u6570" }, { damage: 15, label: "\u62A5\u8B66", counter: counter("recipe", 1, 6, 4) }],
       rule: "\u6BCF\u591A\u62D6\u4E00\u56DE\u5408\uFF0C\u540E\u7EED\u653B\u51FB\u90FD\u589E\u52A0 3 \u70B9\u4F24\u5BB3\u3002\u62A4\u76FE\u53EA\u80FD\u6321\u5F53\u524D\u4E00\u51FB\uFF0C\u5C3D\u65E9\u63A5\u4E0A\u914D\u65B9\u3002",
       note: "\u957F\u671F\u9AD8\u94A0\u996E\u98DF\u53EA\u662F\u9AD8\u8840\u538B\u7684\u591A\u4E2A\u98CE\u9669\u56E0\u7D20\u4E4B\u4E00\u3002\u73B0\u5B9E\u4E2D\u7684\u8840\u538B\u9700\u901A\u8FC7\u89C4\u8303\u6D4B\u91CF\u5224\u65AD\u3002\u6E38\u620F\u91CC\u7684\u8B66\u62A5\u8BFB\u6570\u662F\u56DE\u5408\u8BA1\u6570\u3002",
       source: "salt"
@@ -2612,10 +2629,19 @@
       name: "\u6EE1\u683C\u5E7B\u8C61",
       image: "golden_apple",
       track: "\u7EC8\u5C40 \xB7 \u9971\u98DF\u6EE1\u683C\u7684\u8FF7\u601D",
-      hp: 98,
-      block: 8,
-      pattern: [{ damage: 12, label: "\u9971\u98DF\u523B\u5EA6" }, { damage: 17, label: "\u91D1\u5149\u53CD\u5C04" }],
-      rule: "\u4E0A\u534A\u573A\u6BCF\u56DE\u5408\u9996\u4E2A\u91CD\u590D\u7C7B\u522B\u7ED9\u5B83 9 \u62A4\u76FE\u3002\u8840\u91CF\u964D\u81F3\u4E00\u534A\u540E\uFF0C\u56DE\u5408\u5185\u82E5\u6CA1\u89E6\u53D1\u4EFB\u4F55\u914D\u65B9\uFF0C\u4E0B\u4E00\u51FB\u989D\u5916\u9020\u6210 9 \u4F24\u5BB3\u3002",
+      hp: 138,
+      block: 12,
+      pattern: [
+        { damage: 14, label: "\u9971\u98DF\u523B\u5EA6", counter: counter("variety", 3, 5, 4) },
+        { damage: 12, block: 12, label: "\u91D1\u5149\u62A4\u58F3", counter: counter("guard", 10, 6, 3) },
+        { damage: 23, interrupt: 8, label: "\u84C4\u529B\u626B\u51FB" }
+      ],
+      enraged: [
+        { damage: 20, label: "\u8FC7\u8F7D\u51B2\u51FB", counter: counter("recipe", 1, 7, 5) },
+        { damage: 15, block: 10, label: "\u5149\u5E55\u56DE\u62A4", counter: counter("guard", 12, 6, 4) },
+        { damage: 27, interrupt: 10, label: "\u6EE1\u683C\u84C4\u529B" }
+      ],
+      rule: "\u4E0A\u534A\u573A\u9996\u4E2A\u91CD\u590D\u7C7B\u522B\u7ED9\u5B83 9 \u62A4\u76FE\u3002\u534A\u8840\u540E\u653B\u52BF\u5347\u7EA7\uFF0C\u6CA1\u5408\u6210\u914D\u65B9\u65F6\u989D\u5916\u9020\u6210 7 \u4F24\u5BB3\u3002\u84C4\u529B\u56DE\u5408\u53EF\u7528\u914D\u65B9\u524A\u5F31\u3002",
       note: "\u9971\u8179\u611F\u548C\u81B3\u98DF\u591A\u6837\u6027\u662F\u4E0D\u540C\u7684\u6982\u5FF5\u3002\u628A\u89C6\u91CE\u62C9\u5230\u4E00\u6BB5\u65F6\u95F4\uFF0C\u770B\u98DF\u7269\u642D\u914D\u548C\u4E60\u60EF\u3002",
       source: "diet"
     }
@@ -2655,14 +2681,15 @@
       block: card.block ? card.block + 3 : 0
     };
   }
-  function makeTrail() {
+  var campRecovery = (challenge) => challenge ? 16 : 22;
+  function makeTrail(challenge) {
     const graph = trail.map((floor, y) => floor.map((entry, x) => {
       let room = StartRoom();
       if (entry.id === "camp") room = CampfireRoom();
       const foe = foes[entry.id];
       if (foe) room = MonsterRoom(Monster({
         name: foe.name,
-        hp: foe.hp,
+        hp: challenge ? Math.round(foe.hp * 1.2) : foe.hp,
         block: foe.block,
         intents: foe.pattern
       }));
@@ -2673,18 +2700,20 @@
   var nodeAt = (state2) => state2.dungeon.graph[state2.dungeon.y][state2.dungeon.x];
   var enemyAt = (state2) => getCurrRoom(state2).monsters?.[0];
   var foodOf = (card) => foodById[card.foodId];
-  var emptyTable = () => ({ groups: [], cards: [], recipes: [], prep: 0, repeat: false });
-  function newFoodRun() {
-    const state2 = actions_default.setDungeon(actions_default.createNewState(), makeTrail());
+  var emptyTable = () => ({ groups: [], cards: [], recipes: [], prep: 0, repeat: false, tactic: null, reserved: null });
+  function newFoodRun(challenge = false) {
+    const state2 = actions_default.setDungeon(actions_default.createNewState(), makeTrail(challenge));
     return {
       ...state2,
       deck: starter.map(makeFood),
       phase: "intro",
+      challenge,
       table: emptyTable(),
       round: 1,
       rewards: [],
       learned: [],
       crafted: 0,
+      countersCleared: 0,
       message: "\u628A\u98DF\u6750\u5E26\u8FDB\u5DE5\u4F5C\u53F0\uFF0C\u8BD5\u8BD5\u80FD\u914D\u51FA\u4EC0\u4E48\u3002"
     };
   }
@@ -2708,11 +2737,15 @@
       round: 1,
       rewards: [],
       table: emptyTable(),
+      tacticsLeft: state2.challenge ? 1 : 2,
       hit: 0,
       combined: false,
       repeatTriggered: false,
       message: ""
     };
+  }
+  function startChallenge(state2) {
+    return state2.phase === "intro" ? travel(newFoodRun(true), "market") : state2;
   }
   function tally(cards2, group) {
     return cards2.filter((id) => foodById[id].group === group).length;
@@ -2724,7 +2757,10 @@
   function intentFor(state2) {
     const enemy = enemyAt(state2);
     const { id } = nodeAt(state2);
-    const intent = { ...enemy.intents[enemy.nextIntent] };
+    const pattern = isBossSecondPhase(state2) ? foes[id].enraged : enemy.intents;
+    const intent = { ...pattern[enemy.nextIntent] };
+    if (state2.challenge && intent.damage > 0) intent.damage += 3;
+    intent.baseDamage = intent.damage;
     const { table } = state2;
     const sweets = tally(table.cards, "treat");
     if (id === "market" && sweets > 0 && sweets === table.cards.length) intent.damage += 6;
@@ -2732,8 +2768,58 @@
     if (id === "web" && !table.recipes.includes("field")) intent.drawLoss = 1;
     if (id === "caries" && sweets > 1) intent.damage += 7 * (sweets - 1);
     if (id === "pressure") intent.damage += 3 * (state2.round - 1);
-    if (id === "boss" && isBossSecondPhase(state2) && table.recipes.length === 0) intent.damage += 9;
+    if (id === "boss" && isBossSecondPhase(state2) && table.recipes.length === 0) intent.damage += 7;
+    if (intent.interrupt && table.recipes.length) {
+      intent.damage = Math.max(0, intent.damage - intent.interrupt);
+      intent.interrupted = true;
+    }
+    if (intent.counter) {
+      const { kind, target, penalty, relief } = intent.counter;
+      const progress = kind === "guard" ? state2.player.block : kind === "recipe" ? table.recipes.length : table.groups.filter((group) => ["staple", "protein", "plant"].includes(group)).length;
+      const met = progress >= target;
+      intent.counter = { ...intent.counter, progress: Math.min(progress, target), met };
+      intent.damage = Math.max(0, intent.damage + (met ? -relief : penalty));
+    }
+    if (table.tactic === "dampen") intent.damage = Math.max(0, intent.damage - 7);
+    if (table.tactic === "crack") intent.block = Math.max(0, (intent.block ?? 0) - 6);
     return intent;
+  }
+  function canUseTactic(state2, tactic) {
+    if (state2.phase !== "fight" || !state2.tacticsLeft || state2.table.tactic) return false;
+    if (tactic === "dampen") return intentFor(state2).damage > 0;
+    if (tactic === "crack") return enemyAt(state2).block > 0 || (intentFor(state2).block ?? 0) > 0;
+    if (!state2.hand.length) return false;
+    if (tactic === "swap") return state2.drawPile.length + state2.discardPile.length > 0;
+    return tactic === "reserve";
+  }
+  function useTactic(state2, tactic, uid) {
+    if (!canUseTactic(state2, tactic)) return state2;
+    const selectsCard = tactic === "reserve" || tactic === "swap";
+    const selected = selectsCard ? state2.hand.find((card) => card.id === uid) : null;
+    if (selectsCard && !selected) return state2;
+    const next = tactic === "swap" ? actions_default.drawCards(state2, { amount: 1 }) : state2;
+    return produce(next, (draft) => {
+      draft.tacticsLeft--;
+      draft.table.tactic = tactic;
+      draft.hit = 0;
+      draft.combined = false;
+      draft.repeatTriggered = false;
+      if (tactic === "crack") {
+        const enemy = enemyAt(draft);
+        enemy.block = Math.max(0, enemy.block - 10);
+        draft.message = "\u53BB\u58F3\uFF1A\u5BF9\u624B\u73B0\u6709\u62A4\u76FE\u51CF\u5C11\uFF0C\u9884\u544A\u4E2D\u7684\u62A4\u76FE\u4E5F\u4F1A\u964D\u4F4E\u3002";
+      } else if (tactic === "dampen") {
+        draft.message = "\u538B\u706B\uFF1A\u5BF9\u624B\u672C\u56DE\u5408\u7684\u4F24\u5BB3\u6700\u591A\u964D\u4F4E 7 \u70B9\u3002";
+      } else if (tactic === "swap") {
+        draft.hand = draft.hand.filter((card) => card.id !== uid);
+        draft.discardPile.push(selected);
+        draft.message = "\u5DF2\u7528 " + selected.name + " \u6362\u6765\u4E00\u5F20\u65B0\u724C\u3002";
+      } else {
+        draft.table.reserved = selected;
+        draft.hand = draft.hand.filter((card) => card.id !== uid);
+        draft.message = "\u5DF2\u7559\u597D " + selected.name + "\uFF0C\u4E0B\u56DE\u5408\u56DE\u5230\u624B\u91CC\u3002";
+      }
+    });
   }
   function adjustEnemy(state2, change) {
     return produce(state2, (draft) => change(enemyAt(draft)));
@@ -2789,6 +2875,7 @@
       });
     }
     const chain = {
+      ...table,
       groups: [.../* @__PURE__ */ new Set([...table.groups, food2.group])],
       cards: [...table.cards, food2.id],
       recipes: [...table.recipes],
@@ -2828,7 +2915,7 @@
   function finishTurn(state2) {
     if (state2.phase !== "fight") return state2;
     const enemy = enemyAt(state2);
-    const { damage, block, energyLoss, drawLoss } = intentFor(state2);
+    const { damage, block, energyLoss, drawLoss, counter: counter2 } = intentFor(state2);
     const index = enemy.nextIntent;
     const baseIntent = enemy.intents[index];
     const withIntent = adjustEnemy(state2, (draft) => {
@@ -2845,6 +2932,7 @@
       });
     }
     if (state2.table.prep) next = actions_default.drawCards(next, { amount: state2.table.prep });
+    if (state2.table.reserved) next = actions_default.addCardToHand(next, { card: state2.table.reserved });
     const loss = Math.max(0, state2.player.currentHealth - next.player.currentHealth);
     return produce(next, (draft) => {
       draft.table = emptyTable();
@@ -2856,6 +2944,10 @@
       draft.message = loss ? "\u4E0A\u4E00\u51FB\u6D88\u8017\u4E86 " + loss + " \u70B9\u8010\u529B\u3002" : "\u6321\u4F4F\u4E86\u4E0A\u4E00\u51FB\u3002";
       if (energyLoss) draft.message += " \u8FDF\u5230\u5E7B\u5F71\u6263\u9664 1 \u884C\u52A8\u3002";
       if (drawLoss) draft.message += " \u9ECF\u7F51\u8BA9\u4F60\u5C11\u62BD\u4E86 1 \u5F20\u3002";
+      if (counter2) {
+        if (counter2.met) draft.countersCleared++;
+        draft.message += counter2.met ? " \u62C6\u62DB\u6210\u529F\u3002" : " \u672A\u62C6\u62DB\uFF0C\u5BF9\u624B\u52A0\u5F3A\u4E86\u653B\u51FB\u3002";
+      }
     });
   }
   function takeReward(state2, id) {
@@ -2866,7 +2958,7 @@
   function campChoice(state2, choice, uid) {
     if (state2.phase !== "camp") return state2;
     if (choice === "rest") {
-      const next = actions_default.addHealth(state2, { target: "player", amount: 22 });
+      const next = actions_default.addHealth(state2, { target: "player", amount: campRecovery(state2.challenge) });
       return { ...next, phase: "route" };
     }
     if (choice === "upgrade") {
@@ -3163,6 +3255,160 @@
     motion.finished.then(() => ghost.remove(), () => ghost.remove());
   }
 
+  // src/sound.js
+  var scores = {
+    camp: { bpm: 102, melody: [67, 71, 74, 0, 76, 74, 71, 69, 65, 69, 72, 0, 74, 72, 69, 67], roots: [43, 45, 41, 43] },
+    fight: { bpm: 126, melody: [62, 0, 65, 69, 67, 65, 62, 0, 60, 64, 67, 0, 69, 67, 64, 60], roots: [38, 46, 36, 45], drums: true },
+    boss: { bpm: 144, melody: [62, 65, 63, 62, 57, 0, 62, 58, 60, 63, 60, 0, 61, 64, 67, 64], roots: [38, 34, 36, 37], drums: true },
+    bossLate: { bpm: 154, melody: [74, 0, 69, 74, 75, 72, 69, 0, 69, 70, 72, 67, 74, 70, 69, 65], roots: [38, 34, 36, 37], drums: true },
+    win: { bpm: 112, melody: [67, 72, 76, 79, 0, 76, 74, 72], roots: [48, 53, 55, 48] },
+    lost: { bpm: 82, melody: [69, 0, 65, 0, 64, 62, 0, 57], roots: [45, 41, 38, 45] }
+  };
+  var effects = {
+    play: [60, 67],
+    recipe: [60, 64, 67, 76],
+    tactic: [52, 64],
+    interrupt: [65, 60, 48],
+    enemy: [46, 42],
+    reward: [65, 69, 72],
+    travel: [62, 69]
+  };
+  var hz = (note) => 440 * 2 ** ((note - 69) / 12);
+  function makeLoop(ctx, score) {
+    const rate = 22050;
+    const step = 30 / score.bpm;
+    const buffer = ctx.createBuffer(1, Math.round(32 * step * rate), rate);
+    const samples = buffer.getChannelData(0);
+    function voice(index, frequency, duration, volume, color) {
+      const start = Math.round(index * step * rate);
+      const length = Math.round(duration * rate);
+      for (let i = 0; i < length; i++) {
+        const t = i / rate;
+        const phase = 2 * Math.PI * frequency * t;
+        const envelope = Math.min(1, t / 9e-3) * (1 - i / length) ** 2;
+        samples[(start + i) % samples.length] += volume * envelope * (Math.sin(phase) + color * Math.sin(2 * phase));
+      }
+    }
+    for (let i = 0; i < 32; i++) {
+      const root = score.roots[Math.floor(i / 8) % score.roots.length];
+      const melody = score.melody[i % score.melody.length];
+      if (melody) voice(i, hz(melody), step * 1.8, 0.21, 0.38);
+      if (i % 2 === 0) voice(i, hz(root), step * 2, 0.24, 0.21);
+      if (i % 8 === 0) voice(i, hz(root + 19), step * 6, 0.115, 0.2);
+      if (score.drums && i % 4 === 0) voice(i, 57, 0.12, 0.23, 0.2);
+      if (score.drums && i % 4 === 2) voice(i, 147, 0.064, 0.085, 0.6);
+    }
+    return buffer;
+  }
+  var CanteenSound = class {
+    constructor(button) {
+      this.button = button;
+      this.enabled = true;
+      this.buffers = /* @__PURE__ */ new Map();
+      try {
+        this.enabled = localStorage.getItem("canteen-sound") !== "off";
+      } catch {
+      }
+      this.updateButton();
+      document.addEventListener("visibilitychange", () => {
+        if (!this.ctx) return;
+        const operation = document.hidden ? this.ctx.suspend() : this.ctx.resume();
+        operation.catch(() => {
+        });
+      });
+    }
+    updateButton() {
+      this.button.textContent = this.enabled ? this.ctx ? "\u97F3\u4E50\u5F00" : "\u64AD\u653E\u97F3\u4E50" : "\u97F3\u4E50\u5173";
+      this.button.setAttribute("aria-pressed", String(this.enabled));
+    }
+    toggle() {
+      if (!this.ctx && this.enabled) {
+        this.unlock();
+        return;
+      }
+      this.enabled = !this.enabled;
+      try {
+        localStorage.setItem("canteen-sound", this.enabled ? "on" : "off");
+      } catch {
+      }
+      this.updateButton();
+      if (this.enabled) this.unlock();
+      if (this.music) this.music.gain.setTargetAtTime(this.enabled ? 0.76 : 0, this.ctx.currentTime, 0.06);
+    }
+    unlock() {
+      try {
+        if (!this.ctx) {
+          const Context = window.AudioContext || window.webkitAudioContext;
+          if (!Context) {
+            this.button.textContent = "\u97F3\u4E50\u4E0D\u53EF\u7528";
+            this.button.disabled = true;
+            return;
+          }
+          this.ctx = new Context();
+          this.master = this.ctx.createGain();
+          this.music = this.ctx.createGain();
+          this.effects = this.ctx.createGain();
+          this.master.gain.value = 0.65;
+          this.music.gain.value = this.enabled ? 0.76 : 0;
+          this.effects.gain.value = 0.68;
+          this.music.connect(this.master);
+          this.effects.connect(this.master);
+          this.master.connect(this.ctx.destination);
+        }
+        this.ctx.resume().catch(() => {
+        });
+        this.setScene(this.wanted || "camp");
+        this.updateButton();
+      } catch {
+      }
+    }
+    setScene(track) {
+      this.wanted = track;
+      if (!this.ctx || this.track === track) return;
+      const { ctx, music } = this;
+      if (!this.buffers.has(track)) this.buffers.set(track, makeLoop(ctx, scores[track]));
+      const source = ctx.createBufferSource();
+      const channel = ctx.createGain();
+      source.buffer = this.buffers.get(track);
+      source.loop = true;
+      const now = ctx.currentTime;
+      channel.gain.value = 0;
+      source.connect(channel).connect(music);
+      source.start();
+      channel.gain.linearRampToValueAtTime(0.78, now + 0.28);
+      source.onended = () => {
+        source.disconnect();
+        channel.disconnect();
+      };
+      if (this.current) {
+        this.current.channel.gain.setTargetAtTime(0, now, 0.06);
+        this.current.source.stop(now + 0.3);
+      }
+      this.current = { source, channel };
+      this.track = track;
+    }
+    effect(action) {
+      if (!this.ctx || this.ctx.state !== "running") return;
+      for (const [i, midi] of (effects[action] || []).entries()) {
+        const start = this.ctx.currentTime + 0.055 * i;
+        const tone = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        tone.type = "triangle";
+        tone.frequency.value = hz(midi);
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.18, start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(1e-3, start + 0.18);
+        tone.connect(gain).connect(this.effects);
+        tone.start(start);
+        tone.stop(start + 0.19);
+        tone.onended = () => {
+          tone.disconnect();
+          gain.disconnect();
+        };
+      }
+    }
+  };
+
   // src/app.js
   var app = document.querySelector("#app");
   var dialog = document.querySelector("#book");
@@ -3173,6 +3419,8 @@
   var state = newFoodRun();
   var locked = false;
   var feedback = {};
+  var cardChoice = null;
+  var sound = new CanteenSound(document.querySelector("[data-sound]"));
   var icon = (id, css = "") => `<img class="pixel ${css}" src="./assets/${id}.png" alt="" draggable="false">`;
   var btn = (action, name, css = "", id = "") => `<button type="button" class="${css}" data-action="${action}" data-id="${id}">${name}</button>`;
   var meal = recipes.find((recipe) => recipe.id === "meal");
@@ -3182,11 +3430,12 @@
 		<span id="${id}" hidden>${text}</span>`;
   }
   var hint = (id, label, text) => `<span class="hint-trigger" data-hint="${id}">${hintButton(id, label, text)}</span>`;
-  function cardView(food2, { card, action, disabled = false, ready = [] } = {}) {
+  function cardView(food2, { card, action, disabled = false, ready = [], canInterrupt = false } = {}) {
     const tag = action ? "button" : "article";
     const attr = action ? `type="button" data-action="${action}" data-id="${card?.id ?? food2.id}"` : "";
     const upgrade23 = card?.upgraded ? `<small class="upgrade">\u5347\u7EA7\u540E ${[card.damage && card.damage + " \u4F24\u5BB3", card.block && card.block + " \u62A4\u76FE"].filter(Boolean).join(" / ")}</small>` : "";
-    const combo = ready.length ? `<span class="card-ready" title="${ready.map(({ name }) => name).join("\u3001")}">\u53EF\u5408\u6210${ready.length > 1 ? " \xD7" + ready.length : ""}</span>` : "";
+    const readyLabel = canInterrupt ? "\u53EF\u524A\u5F31\u84C4\u529B" : "\u53EF\u5408\u6210" + (ready.length > 1 ? " \xD7" + ready.length : "");
+    const combo = ready.length ? `<span class="card-ready" title="${ready.map(({ name }) => name).join("\u3001")}">${readyLabel}</span>` : "";
     return `<${tag} class="food-card ${food2.group} ${combo ? "combo-ready" : ""}" ${attr} ${disabled ? 'aria-disabled="true"' : ""}>
 		<span class="card-top"><span class="cost" aria-label="${food2.cost} \u884C\u52A8">${food2.cost}</span><span class="card-group">${groups[food2.group]}</span></span>
 		<span class="card-art">${icon(food2.image)}</span>
@@ -3220,7 +3469,7 @@
     const recent = table.cards;
     const isOpening = nodeAt(state).id === "market" && state.round === 1;
     const didEndTurn = state.round > 1 && recent.length === 0;
-    const notableEvent = state.combined || state.repeatTriggered || didEndTurn;
+    const notableEvent = state.combined || state.repeatTriggered || table.tactic || didEndTurn;
     const recipeNames = table.recipes.map((id) => recipes.find((recipe) => recipe.id === id).name);
     const mealMissing = meal.need.filter((group) => !table.groups.includes(group));
     const missingLabel = mealMissing.length && mealMissing.length < meal.need.length ? "\u4E09\u4EF6\u5957\u7F3A" + mealMissing.map((group) => groups[group]).join("\u3001") : "";
@@ -3273,17 +3522,48 @@
 		${btn("end", "\u7ED3\u675F\u56DE\u5408", mightPlay ? "turn-button" : "primary")}
 	</div>`;
   }
+  var counterLabels = {
+    variety: (goal) => "\u51FA " + goal + " \u7C7B\u4E3B\u98DF\u3001\u86CB\u767D\u98DF\u6750\u6216\u852C\u679C",
+    guard: (goal) => "\u53E0\u5230 " + goal + " \u70B9\u62A4\u76FE",
+    recipe: (goal) => "\u5408\u6210 " + goal + " \u9053\u914D\u65B9"
+  };
+  function counterView(counter2) {
+    if (!counter2) return "";
+    const { kind, target, progress, met, penalty, relief } = counter2;
+    return `<div class="counter-strip ${met ? "counter-done" : ""}">
+		<strong>${met ? "\u5DF2\u62C6\u62DB" : "\u62C6\u62DB\u6761\u4EF6"}</strong>
+		<span>${counterLabels[kind](target)} <b>${progress}/${target}</b></span>
+		<small>${met ? "\u672C\u51FB\u4F24\u5BB3 \u2212" + relief : "\u672A\u5B8C\u6210\u65F6\u4F24\u5BB3 +" + penalty}</small>
+	</div>`;
+  }
+  function tacticalPanel(intent) {
+    const choices = [
+      ["dampen", "\u538B\u706B", "\u654C\u65B9\u4F24\u5BB3 \u22127"],
+      ["crack", "\u53BB\u58F3", "\u73B0\u6709\u76FE \u221210 \xB7 \u9884\u544A\u76FE \u22126"],
+      ["reserve", "\u7559\u724C", "\u7559\u4E00\u5F20\u5230\u4E0B\u56DE\u5408"],
+      ["swap", "\u6362\u724C", "\u5F03\u4E00\u5F20\uFF0C\u518D\u6478\u4E00\u5F20"]
+    ];
+    const reserved = state.table.reserved;
+    return `<section class="tactic-panel ${cardChoice ? "choosing" : ""}" aria-label="\u6218\u672F\u706B\u5019">
+		<div class="tactic-title"><b>\u6218\u672F\u706B\u5019</b><span>\u672C\u573A\u5269 ${state.tacticsLeft} \u6B21 \xB7 \u6BCF\u56DE\u5408\u4E00\u6B21</span></div>
+		<div class="tactic-buttons">${choices.map(([id, label, detail]) => `<button type="button" data-action="tactic" data-id="${id}"
+			${!canUseTactic(state, id) ? "disabled" : ""} ${id === "reserve" || id === "swap" ? 'aria-pressed="' + (cardChoice === id) + '"' : ""}><strong>${cardChoice === id ? "\u53D6\u6D88" + label : label}</strong><small>${detail}</small></button>`).join("")}</div>
+		${cardChoice ? '<p role="status">' + (cardChoice === "swap" ? "\u70B9\u4E00\u5F20\u624B\u724C\u5F03\u6389\uFF0C\u518D\u6478\u4E00\u5F20\u3002" : "\u70B9\u4E00\u5F20\u624B\u724C\uFF0C\u7559\u5230\u4E0B\u56DE\u5408\u3002") + "</p>" : ""}
+		${reserved ? "<p>\u5DF2\u9884\u7559\uFF1A<b>" + reserved.name + "</b></p>" : ""}
+		${!cardChoice && !reserved && intent.interrupt && !intent.interrupted ? "<p>\u5148\u8BD5\u7740\u5408\u6210\u914D\u65B9\uFF0C\u53EF\u4EE5\u628A\u706B\u5019\u7559\u5230\u66F4\u96BE\u7684\u4E00\u51FB\u3002</p>" : ""}
+	</section>`;
+  }
   function battle() {
     const { id, y } = nodeAt(state);
     const foe = foes[id];
     const place = waypoints[id];
     const enemy = enemyAt(state);
     const intent = intentFor(state);
-    const base = enemy.intents[enemy.nextIntent];
-    const changed = intent.damage > base.damage;
+    const changed = intent.damage - intent.baseDamage;
     const notes = [
-      `<b class="${changed ? "warn" : ""}">${intent.damage} \u4F24\u5BB3${changed ? ` <small>+${intent.damage - base.damage}</small>` : ""}</b>`,
+      `<b class="${changed > 0 ? "warn" : changed < 0 ? "countered" : ""}">${intent.damage} \u4F24\u5BB3${changed ? ` <small>${changed > 0 ? "+" : ""}${changed}</small>` : ""}</b>`,
       intent.block ? `<b>${intent.block} \u62A4\u76FE</b>` : "",
+      intent.interrupted ? '<b class="countered">\u84C4\u529B\u5DF2\u524A\u5F31</b>' : intent.interrupt ? '<b class="warn">\u5408\u6210\u53EF\u524A\u5F31 ' + intent.interrupt + "</b>" : "",
       intent.energyLoss ? '<b class="warn">\u4E0B\u56DE\u5408 \u22121 \u884C\u52A8</b>' : "",
       intent.drawLoss ? '<b class="warn">\u4E0B\u56DE\u5408 \u22121 \u62BD\u724C</b>' : ""
     ].join("");
@@ -3295,7 +3575,7 @@
     return `<section class="arena encounter-${id} ${down ? "foe-down" : ""}" aria-label="\u5BF9\u6218">
 		<header class="encounter-header">
 			<div><p class="eyebrow encounter-position">\u7B2C ${y} / ${steps} \u7AD9 <span class="trail-pips" aria-hidden="true">${pips}</span></p><strong>${place.name}</strong></div>
-			<span class="round-state">\u7B2C ${state.round} \u56DE\u5408 <b>${down ? "\u6218\u6597\u7ED3\u675F" : "\u4F60\u7684\u56DE\u5408"}</b></span>
+			<span class="round-state">${state.challenge ? "\u6311\u6218 \xB7 " : ""}\u7B2C ${state.round} \u56DE\u5408 <b>${down ? "\u6218\u6597\u7ED3\u675F" : "\u4F60\u7684\u56DE\u5408"}</b></span>
 		</header>
 		<div class="battlefield">
 			<div class="fighter player-side">
@@ -3319,9 +3599,10 @@
 				<div class="enemy-health">${vitality(enemy, foe.name, feedback.foeBefore)}</div>
 			</div>
 		</div>
+		${down ? "" : counterView(intent.counter)}
 		<p class="encounter-story">${place.enter}</p>
 	</section>
-	<div class="inventory-frame">${tableView()}
+	<div class="inventory-frame">${tableView()}${down ? "" : tacticalPanel(intent)}
 	<section class="hand-panel">
 		<div class="hand-header">${energyView()}<div class="pile-info"><h2>\u624B\u724C</h2>
 			<small>\u62BD\u724C ${state.drawPile.length} \xB7 \u5F03\u724C ${state.discardPile.length}${state.exhaustPile.length ? ` \xB7 \u6D88\u8017 ${state.exhaustPile.length}` : ""}</small>
@@ -3329,10 +3610,16 @@
 			${turnControls(intent, down)}
 			${recent ? `<small class="hand-feedback">${recent}</small>` : ""}
 		</div>
-		<div class="hand">${state.hand.map((card) => {
+		<div class="hand ${cardChoice ? "reserve-select" : ""}">${state.hand.map((card) => {
       const food2 = foodOf(card);
-      const disabled = card.energy > state.player.currentEnergy;
-      return cardView(food2, { action: "play", card, disabled, ready: disabled || down ? [] : recipesForPlay(state.table, food2) });
+      const disabled = !cardChoice && card.energy > state.player.currentEnergy;
+      return cardView(food2, {
+        action: cardChoice || "play",
+        card,
+        disabled,
+        ready: disabled || down || cardChoice ? [] : recipesForPlay(state.table, food2),
+        canInterrupt: !!intent.interrupt && !intent.interrupted
+      });
     }).join("") || "<p>\u624B\u724C\u5DF2\u6253\u5B8C\uFF0C\u53EF\u4EE5\u7ED3\u675F\u56DE\u5408\u3002</p>"}</div>
 	</section></div>`;
   }
@@ -3340,10 +3627,11 @@
     return `<section class="hero">
 		<div class="hero-copy"><p class="eyebrow">\u708A\u706B\u8425\u5730 \xB7 \u81B3\u98DF\u5361\u724C\u8FDC\u5F81</p>
 		<h1>\u65B9\u5757\u98DF\u5802</h1>
-		<p class="hero-hook">\u201CIf it\u2019s not in Minecraft, don\u2019t eat it.\u201D</p>
 		<p class="hero-text">\u8425\u5730\u4ECA\u665A\u8FD8\u6CA1\u5F00\u996D\u3002\u5E26\u4E0A\u98DF\u6750\u724C\uFF0C\u95EF\u8FC7\u96C6\u5E02\u548C\u77FF\u9053\uFF0C\u628A\u4E00\u5957\u80FD\u642D\u5F97\u8D77\u6765\u7684\u665A\u9910\u5E26\u56DE\u7089\u706B\u8FB9\u3002</p>
 		<div class="hero-actions">${btn("travel", "\u5F00\u5C40 \xB7 \u5BF9\u6218\u96F6\u98DF\u53F2\u83B1\u59C6", "primary", "market")}
-			${hint("hint-how", "\u73A9\u6CD5", "\u70B9\u624B\u724C\u53EF\u4EE5\u51FA\u724C\uFF0C\u6BCF\u56DE\u5408\u8865\u6EE1\u884C\u52A8\u5E76\u62BD\u724C\u3002\n\u540C\u56DE\u5408\u6253\u51FA\u642D\u914D\u7684\u98DF\u6750\uFF0C\u81EA\u52A8\u5408\u6210\u914D\u65B9\u3002\n\u5BF9\u624B\u4F1A\u9884\u544A\u4E0B\u4E00\u6B65\uFF0C\u518D\u6839\u636E\u4F60\u51FA\u4E86\u4EC0\u4E48\u724C\u8C03\u6574\u3002")}</div></div>
+			${btn("challenge", "\u6311\u6218\u8FDC\u5F81", "turn-button")}
+			${hint("hint-how", "\u73A9\u6CD5", "\u5148\u770B\u5BF9\u624B\u9884\u544A\uFF0C\u518D\u70B9\u624B\u724C\u3002\u6309\u8981\u6C42\u51FA\u724C\u6216\u53E0\u76FE\u53EF\u4EE5\u62C6\u62DB\u3002\n\u6362\u724C\u3001\u7559\u724C\u3001\u538B\u706B\u548C\u53BB\u58F3\u5171\u7528\u6218\u672F\u706B\u5019\u3002")}</div>
+		<p class="challenge-note">\u6311\u6218\u8FDC\u5F81\uFF1A\u654C\u4EBA\u66F4\u5F3A\uFF0C\u6BCF\u573A\u9650\u7528\u4E00\u6B21\u706B\u5019\uFF0C\u4F11\u606F\u56DE\u590D\u66F4\u5C11\u3002</p></div>
 		<div class="hero-media" aria-hidden="true">
 			<div class="hero-traveler">${portrait("player")}${icon("campfire", "hero-fire")}</div>
 			<div class="hero-rations">${icon("baked_potato")}${icon("cooked_salmon")}${icon("carrot")}</div>
@@ -3389,7 +3677,7 @@
   function camp() {
     return `<section class="interlude"><p class="eyebrow">\u7B2C 4 \u7AD9</p><h1>\u7BDD\u706B\u8865\u7ED9</h1>
 		<p>\u6062\u590D\u8010\u529B\uFF0C\u6216\u5347\u7EA7\u4E00\u5F20\u4F24\u5BB3\u724C / \u62A4\u76FE\u724C\u3002\u4E8C\u9009\u4E00\u3002</p>
-		${btn("rest", "\u4F11\u606F \xB7 \u6062\u590D 22 \u70B9\u8010\u529B", "primary")}
+		${btn("rest", "\u4F11\u606F \xB7 \u6062\u590D " + campRecovery(state.challenge) + " \u70B9\u8010\u529B", "primary")}
 		<div class="hand reward-hand">${state.deck.filter((card) => !card.upgraded && (card.damage || card.block)).map((card) => cardView(foodOf(card), { card, action: "upgrade" })).join("")}</div></section>`;
   }
   function finalScreen() {
@@ -3397,7 +3685,7 @@
     return `<section class="interlude"><p class="eyebrow">${win ? "\u95EF\u5173\u6210\u529F" : "\u8010\u529B\u8017\u5C3D"}</p>
 		<h1>${win ? "\u665A\u9910\u5E26\u56DE\u6765\u4E86" : "\u56DE\u8425\u5730\u518D\u5907\u4E00\u9910"}</h1>
 		<p>${win ? waypoints.boss.clear : `${waypoints[nodeAt(state).id].name}\u7684\u8DEF\u8FD8\u6CA1\u6253\u901A\u3002\u56DE\u53BB\u6362\u4E00\u4EFD\u98DF\u6750\u518D\u51FA\u53D1\u3002`}</p>
-		<p>\u8FD9\u8D9F\u5B8C\u6210\u4E86 ${state.crafted} \u6B21\u914D\u65B9\uFF0C\u8FC7\u4E86 ${state.learned.length} \u573A\u5BF9\u6218\u3002</p>
+		<p>\u8FD9\u8D9F\u5B8C\u6210\u4E86 ${state.crafted} \u6B21\u914D\u65B9\u3001\u62C6\u4E86 ${state.countersCleared} \u62DB\uFF0C\u8FC7\u4E86 ${state.learned.length} \u573A\u5BF9\u6218\u3002</p>
 		${btn("restart", "\u518D\u6765\u4E00\u5C40", "primary")}
 		${win ? reality("boss") : ""}</section>`;
   }
@@ -3405,6 +3693,7 @@
   function render(phase = state.phase) {
     hints.close();
     app.innerHTML = views[phase]();
+    sound.setScene(state.phase === "fight" ? nodeAt(state).id === "boss" ? enemyAt(state).currentHealth <= enemyAt(state).maxHealth / 2 ? "bossLate" : "boss" : "fight" : ["win", "lost"].includes(state.phase) ? state.phase : "camp");
   }
   function openBook(tab) {
     const pages = {
@@ -3438,8 +3727,13 @@
   function present(next, action, flight) {
     const previous = state;
     state = next;
+    cardChoice = null;
     feedback = {};
     if (action === "play") {
+      const after = intentFor(state);
+      const before = intentFor(previous);
+      const interrupted = after.interrupted && !before.interrupted || after.counter?.met && !before.counter?.met;
+      sound.effect(interrupted ? "interrupt" : state.combined ? "recipe" : "play");
       const foeBefore = enemyAt(previous);
       feedback.foeBefore = foeBefore.currentHealth;
       feedback.guardGain = Math.max(0, state.player.block - previous.player.block);
@@ -3450,12 +3744,16 @@
         state.hit ? "\u5BF9\u624B\u8010\u529B\u51CF\u5C11 " + state.hit : "",
         feedback.guardGain ? "\u4F60\u7684\u62A4\u76FE\u589E\u52A0 " + feedback.guardGain : ""
       ].filter(Boolean).join("\u3002");
+    } else if (action === "tactic" || action === "reserve" || action === "swap") {
+      sound.effect("tactic");
+      announcer.textContent = state.message;
     } else if (action === "end") {
       feedback.playerBefore = previous.player.currentHealth;
       feedback.loss = Math.max(0, previous.player.currentHealth - state.player.currentHealth);
       feedback.blocked = Math.min(previous.player.block, intentFor(previous).damage);
       announcer.textContent = state.phase === "lost" ? "\u8010\u529B\u8017\u5C3D\u3002" : state.message + "\u7B2C " + state.round + " \u56DE\u5408\u3002";
     } else {
+      if (action === "travel" || action === "reward" || action === "challenge") sound.effect(action === "challenge" ? "travel" : action);
       announcer.textContent = "";
     }
     if (flight && previous.phase === "fight" && (state.phase === "reward" || state.phase === "win")) {
@@ -3483,6 +3781,7 @@
     if (action === "end") app.querySelector('[data-action="end"]')?.focus({ preventScroll: true });
   }
   function animateEnemyTurn(next) {
+    sound.effect("enemy");
     if (reducedMotion()) {
       present(next, "end");
       return;
@@ -3504,14 +3803,30 @@
     }, 290);
   }
   document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-sound]")) {
+      sound.toggle();
+      return;
+    }
+    sound.unlock();
     const book = event.target.closest("[data-book]");
     if (book) openBook(book.dataset.book);
     const button = event.target.closest("[data-action]");
     if (!button || locked || button.getAttribute("aria-disabled") === "true") return;
     const { action, id } = button.dataset;
+    if (action === "tactic" && (id === "reserve" || id === "swap")) {
+      if (!canUseTactic(state, id)) return;
+      cardChoice = cardChoice === id ? null : id;
+      render();
+      app.querySelector(cardChoice ? `[data-action="${cardChoice}"]` : `[data-action="tactic"][data-id="${id}"]`)?.focus({ preventScroll: true });
+      return;
+    }
     const transitions = {
       travel: () => travel(state, id),
+      challenge: () => startChallenge(state),
       play: () => playFood(state, id),
+      tactic: () => useTactic(state, id),
+      reserve: () => useTactic(state, "reserve", id),
+      swap: () => useTactic(state, "swap", id),
       end: () => finishTurn(state),
       reward: () => takeReward(state, id),
       rest: () => campChoice(state, "rest"),
