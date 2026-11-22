@@ -143,13 +143,6 @@ details summary{cursor:pointer;font-weight:750;color:#d4eba7;min-height:32px}
 .result span{padding:4px 8px;border:1px solid var(--edge)}
 .result b{margin-right:5px}
 .reward-food img{width:32px;height:32px}
-@media(max-width:680px),(pointer:coarse){
- #touch{display:flex;align-items:center;gap:6px;justify-content:flex-end;margin-top:5px}
- #touch button{min-height:42px}
- #stick{display:grid;place-items:center;width:54px;height:54px;margin-right:auto;border:2px solid #95b293;background:#12271c;touch-action:none}
- #knob{width:22px;height:22px;background:#9abd91;border:2px outset #d1f4c3;pointer-events:none}
- #fire,#dashButton{touch-action:none}
-}
 @media(max-width:680px){
  .command-row,.inventory-row{gap:5px}
  .stage b{font-size:.91rem}
@@ -176,30 +169,7 @@ details summary{cursor:pointer;font-weight:750;color:#d4eba7;min-height:32px}
  .portrait{width:72px;margin:5px}
 }
 .story-art,.portrait{image-rendering:pixelated}
-@media(pointer:coarse) and (orientation:landscape) and (max-height:500px){
- .battle-header,.battle-footer{padding:3px 8px}
- .tools button{min-height:32px;padding:2px 8px}
- #toast{min-height:1.3em;padding-top:0}
- .battle-footer{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px}
- .battle-footer .vitals,.battle-footer .inventory-row,#tutorial{grid-column:1}
- .battle-footer #touch{grid-column:2;grid-row:1/span 3;align-self:end;margin:0}
- .battle-footer .dash{display:none}
- .battle-footer .vitals{justify-content:flex-start;margin:0}
- .battle-footer .inventory-row{justify-content:flex-start}
- #tutorial{margin:0;padding:1px 5px}
- #tutorial button{min-height:24px}
-}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-@media(pointer:coarse) and (orientation:landscape) and (max-height:500px){
- .battle-header .stage small{font-size:.78rem}
- .battle-footer .vitals{gap:14px}
- .battle-footer .vitals b{display:block;line-height:1.25}
- .battle-footer #hearts img,.battle-footer #hunger6 img{width:13px}
- .battle-footer #plateStatus{min-height:30px;font-size:.82rem;padding:2px 5px}
- .battle-footer .stock-slot{width:32px;height:29px}
- .battle-footer .progress{font-size:.75rem;min-width:60px}
- .battle-footer .inventory-row{gap:6px}
-}
 #arena:focus{outline:none}
 body[data-chapter="1"] .battle-header,
 body[data-chapter="1"] .battle-footer{background:#f1f5d9;color:#294330;border-color:#91ab68}
@@ -211,3 +181,85 @@ body[data-chapter="1"] #bossHud{color:#783452}
 body[data-chapter="1"] #tutorial{background:#dceab6;color:#233f2a}
 body[data-chapter="1"] .arena-frame{background:#a7ce83}
 .scene-overworld{background:#9dc767;background-image:linear-gradient(145deg,#d7e9a4 10%,#a1c972 55%,#729b51)}
+/* Touch controls are outside the canvas, so neither thumb covers enemies. */
+#upgrade{background:#d6eb82;color:#24331f}
+.orientation-panel{width:min(100%,440px)}
+.touch-actions{display:flex;align-items:center;gap:8px}
+@media(max-width:680px),(pointer:coarse){
+ #game{grid-template-rows:auto minmax(0,1fr) auto auto}
+ #touch{
+  --control-size:84px;
+  display:flex;gap:12px;align-items:center;justify-content:space-between;
+  padding:4px 12px 7px;background:#21342b;z-index:2;
+  touch-action:none;user-select:none;-webkit-user-select:none
+ }
+ body:not([data-active="true"]) #touch{visibility:hidden}
+ #stick{
+  flex:none;width:var(--control-size);height:var(--control-size);display:grid;place-items:center;
+  border:3px solid #96b18a;border-radius:50%;touch-action:none;
+  background:radial-gradient(circle,#3a5849 45%,#20352b 46%,#20352b 64%,#567463 65%);
+  box-shadow:inset 0 0 0 2px #192820
+ }
+ #knob{
+  width:42%;height:42%;border:2px solid #d6edb8;border-radius:50%;pointer-events:none;
+  background:#94b483;box-shadow:0 2px 0 #24392c
+ }
+ #fire,#dashButton{touch-action:none;-webkit-tap-highlight-color:transparent}
+ #fire{
+  display:grid;place-content:center;justify-items:center;line-height:1.05;gap:3px;
+  width:var(--control-size);height:var(--control-size);min-height:0;padding:4px;
+  border:3px solid #f6d698;border-radius:50%;background:#8b5025;color:#fff7df;
+  font-size:1.1rem;box-shadow:inset 0 0 0 2px #5a341d
+ }
+ #fire::before{
+  content:'';width:clamp(18px,5vh,26px);aspect-ratio:1;
+  background:url('../assets/minecraft/bow.png') center/contain no-repeat;image-rendering:pixelated
+ }
+ #fire small{font-size:.62rem;color:#ffe9ba}
+ #fire.is-pressed{background:#ab652b;border-color:#fff0ba;transform:scale(.96)}
+ #dashButton{
+  min-width:50px;min-height:48px;padding:3px 5px;border-radius:9px;font-size:.85rem;
+  background:#526448;color:#fff7df
+ }
+}
+@media(pointer:coarse) and (orientation:landscape){
+ #game{
+  --control-lane:clamp(95px,15vw,155px);
+  grid-template-columns:var(--control-lane) minmax(0,1fr) var(--control-lane);
+  grid-template-rows:auto minmax(0,1fr) auto
+ }
+ .battle-header{grid-column:1/-1;grid-row:1;padding:3px 10px}
+ .arena-frame{grid-column:2;grid-row:2}
+ .battle-footer{
+  grid-column:1/-1;grid-row:3;padding:3px 8px;display:grid;
+  grid-template-columns:auto minmax(0,1fr);column-gap:10px
+ }
+ #tutorial{grid-column:1/-1;margin:0;min-height:26px;padding:0 5px;font-size:.76rem}
+ #tutorial button{min-height:26px}
+ .battle-footer .vitals{gap:10px;margin:0}
+ .battle-footer .vitals b{display:block;line-height:1.25}
+ .battle-footer #hearts img,.battle-footer #hunger6 img{width:clamp(8px,1.6vw,13px)}
+ .battle-footer .inventory-row{display:flex;justify-content:flex-end;gap:5px}
+ .battle-footer #plateStatus{min-height:30px;font-size:.78rem;padding:2px 5px}
+ .battle-footer .stock-slot{width:clamp(23px,4vw,32px);height:28px}
+ .battle-footer .stock-slot img{width:20px;height:20px}
+ .battle-footer .progress{min-width:70px;font-size:.75rem}
+ .battle-footer .dash{display:none}
+ .tools button{min-height:36px;padding:2px 8px;font-size:.8rem}
+ #bossHud,#toast{font-size:.8rem}
+ #toast{min-height:2.6em;padding-top:1px}
+ #touch{
+  --control-size:clamp(74px,12vw,108px);
+  grid-column:1/-1;grid-row:2;align-self:end;
+  padding:0 0 6px;display:grid;grid-template-columns:var(--control-lane) 1fr var(--control-lane);
+  justify-items:center;align-items:end;background:none;pointer-events:none
+ }
+ #stick{grid-column:1;pointer-events:auto}
+ .touch-actions{grid-column:3;flex-direction:column-reverse;gap:6px;pointer-events:none}
+ .touch-actions button{pointer-events:auto}
+ #dashButton{min-height:40px;min-width:52px}
+}
+@media(pointer:coarse) and (orientation:landscape) and (max-width:660px){
+ .battle-footer .progress{display:none}
+ .battle-footer .vitals{gap:6px}
+}

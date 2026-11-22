@@ -13,10 +13,9 @@ class GameStateManager{
 }
 const TUTORIAL_TIPS=[
  '艾莉丝：按 WASD、方向键或拖动摇杆，先走几步。',
- '艾莉丝：拉弓时也能走。按住左键或「拉弓」，别停在怪物面前。',
+ '艾莉丝：拉弓时也能走。电脑按住左键，手机点按或按住「攻击」。',
  '艾莉丝：被堵住时按空格或「冲刺」，从空隙穿过去。',
- '艾莉丝：小怪有时会掉食材，靠近就能捡。缺食材可以开工作台领。',
- '艾莉丝：击败小怪攒经验。升级时按自己的打法挑一项强化。'
+ '艾莉丝：靠近就能捡食材。打开工作台可领补给并搭餐盘。'
 ];
 const STORY={
  intro:[
@@ -63,11 +62,30 @@ class DialogueManager{
  finish(){if(!this.done)return;const callback=this.done;this.done=null;$('overlay').innerHTML='';callback()}
 }
 class TutorialManager{
- constructor(enabled=true){this.enabled=enabled;this.step=enabled?0:5;this.killed=false;this.collected=false;this.selected=false}
- event(name){if(name==='PLAYER_MOVED'&&this.step===0)this.step=1;if(name==='SHOT_FIRED'&&this.step===1)this.step=2;if(name==='PLAYER_DASHED'&&this.step===2)this.step=3;if(name==='ENEMY_KILLED')this.killed=true;if(name==='ORB_COLLECTED')this.collected=true;if(name==='UPGRADE_SELECTED')this.selected=true;if(this.step===3&&this.killed&&this.collected)this.step=4;if(this.step===4&&this.selected)this.skip()}
- skip(){this.step=5;this.enabled=false}
+ constructor(enabled=true){this.enabled=enabled;this.move=false;this.attack=false;this.dash=false;this.craft=false}
+ get step(){return !this.move?0:!this.attack?1:!this.dash?2:3}
+ event(name){
+  if(name==='PLAYER_MOVED')this.move=true;
+  if(name==='SHOT_FIRED')this.attack=true;
+  if(name==='PLAYER_DASHED')this.dash=true;
+  if(name==='CRAFT_OPENED')this.craft=true;
+  if(this.move&&this.attack&&this.dash&&this.craft)this.skip();
+ }
+ skip(){this.enabled=false}
 }
 class SpawnDirector{
  interval(t,round=1){return Math.max(.58,(t<12?1.5:t<25?.95:.7)-(round-1)*.12)}
- stages(game){if(game.bossStarted)return false;const t=game.time-game.roundStart,config=LEVELS[game.round-1];if(t>=config.wave&&!game.stageFlags.has('boss')){game.stageFlags.add('boss');game.bus.emit('BOSS_WARNING');game.transition(STATES.BOSS_WARNING);audio.play('boss');game.warnBoss();return true}if(t>=12&&!game.stageFlags.has('danger')){game.stageFlags.add('danger');game.bus.emit('STAGE_CHANGED',game.round);game.notify('Alex：'+CHAPTER_KNOWLEDGE[game.round-1][1])}if(t>=25&&!game.stageFlags.has('heavy')){game.stageFlags.add('heavy');game.notify('Alex：'+CHAPTER_KNOWLEDGE[game.round-1][2])}return false}
+ stages(game){
+  if(game.bossStarted)return;
+  const t=game.time-game.roundStart,config=LEVELS[game.round-1];
+  if(t>=config.wave){game.bossStart();return}
+  const events=[
+   [config.wave-5,'boss',()=>{game.stageFlags.add('heavy');game.stageFlags.add('danger');game.warnBoss()}],
+   [25,'heavy',()=>game.notify('艾莉丝：'+CHAPTER_KNOWLEDGE[game.round-1][2])],
+   [12,'danger',()=>game.notify('艾莉丝：'+CHAPTER_KNOWLEDGE[game.round-1][1])]
+  ];
+  for(const [time,flag,run] of events){
+   if(t>=time&&!game.stageFlags.has(flag)){game.stageFlags.add(flag);run();break}
+  }
+ }
 }

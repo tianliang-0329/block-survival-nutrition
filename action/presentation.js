@@ -8,7 +8,6 @@ const GROUP_LESSONS={
 const groupCount=(game,group)=>Object.entries(game.inventory)
  .reduce((sum,[id,quantity])=>sum+(GROUP_IDS[id]===group?quantity:0),0);
 const groupName=group=>FOOD_GROUPS.find(([id])=>id===group)?.[1]||'其他食物';
-const alexLine=lesson=>({speaker:'Alex（艾莉丝）',face:'alex',...lesson});
 
 function enableMenuMusic(){
  const status=$('audioStatus');
@@ -26,6 +25,8 @@ function enableMenuMusic(){
 
 function refreshVisualHUD(g){
  document.body.dataset.scene=g.state;
+ document.body.dataset.active=String(g.machine.active);
+ $('upgrade').hidden=g.xp<g.need;
  document.body.dataset.chapter=String(g.round);
  const p=g.player;
  $('stage').textContent=['主世界','下界','末地'][g.round-1]+' · 第 '+g.round+' 章';
@@ -57,53 +58,31 @@ function refreshVisualHUD(g){
 }
 
 Game.prototype.queueFoodLesson=function(group){
- if(!GROUP_LESSONS[group]||!this.lessonQueue)return;
- this.lessonQueue.push(alexLine(GROUP_LESSONS[group]));
+ if(GROUP_LESSONS[group])this.lessonQueue.push(GROUP_LESSONS[group]);
 };
 Game.prototype.warnBoss=function(){
- const text=this.round===3?'在工作台用五类补给做好餐盘，就能暂时破开龙盾。': '在工作台把主食、蔬菜和蛋白质食品配成餐盘，就能暂时破盾。';
- this.dialogue.openLines([alexLine({
-  title:'多样搭配才能破盾',text,
-  advice:'小怪会继续追你。先绕开它们，等护盾打开再向首领射箭。'
- })],STATES.BOSS_WARNING,()=>this.bossStart());
+ this.bus.emit('BOSS_WARNING');
+ const recipe=this.round===3?'五类补给':'主食、蔬菜和蛋白质食品';
+ this.notify('首领即将出现。艾莉丝：提前用'+recipe+'搭餐盘，登场时就能破盾。',5);
 };
 Game.prototype.showMealFeedback=function(){
- const craftResult=$('craftResult');
- craftResult.classList.add('meal-highlight');
- craftResult.innerHTML='<strong>均衡补给 · 餐盘完成！</strong><span>'+(this.delivery?'已配好外卖补给。':this.mealPrepared?'这份餐盘会在首领登场时开启破盾窗口。':'已开启 '+this.plateWindow+' 秒破盾窗口。')+'</span>';
- if(this.bossStarted&&!this.delivery)this.notify('餐盘激活 · 护盾已破');
- if(this.lessonSeen.has('meal'))return;
- this.lessonSeen.add('meal');
- const resume=this.state;
- this.dialogue.openLines([alexLine({
-  title:'均衡补给',text:'第一份餐盘配好了。不同类别放在一起，才能获得这份补给。',advice:'点外卖时也可以从主食、蔬菜和蛋白质来源搭起。'
- })],STATES.DIALOGUE,()=>{
-  this.transition(resume);
-  this.renderCraft();
-  const result=$('craftResult');
-  result.classList.add('meal-highlight');
-  result.innerHTML=craftResult.innerHTML;
- });
+ const result=$('craftResult');
+ result.classList.add('meal-highlight');
+ result.innerHTML='<strong>餐盘完成</strong><span>'+(this.delivery?'已配好外卖补给。':this.mealPrepared?'首领登场时自动破盾。':'已开启 '+this.plateWindow+' 秒破盾窗口。')+'</span><small>艾莉丝：点外卖时，也可以从主食、蔬菜和蛋白质来源搭起。</small>';
+ if(this.bossStarted&&!this.delivery)this.notify('餐盘已激活。趁护盾打开，边走边攻击。');
 };
 const activeUpdate=Game.prototype.update;
 Game.prototype.update=function(dt){
  activeUpdate.call(this,dt);
  if(!this.machine.active)return;
- this.noticeSeconds=Math.max(0,(this.noticeSeconds||0)-dt);
+ this.noticeSeconds=Math.max(0,this.noticeSeconds-dt);
  if(this.shieldLessonPending){
   this.shieldLessonPending=false;
-  if(!this.lessonSeen.has('shield')){
-   this.lessonSeen.add('shield');
-   this.dialogue.openLines([alexLine({
-    title:'护盾挡住了箭',text:'需要合理搭配才能破盾。打开工作台，按本章配方做好餐盘。',advice:'缺食材就领补给箱，窗口开启后再用弓射击。'
-   })],STATES.DIALOGUE,()=>this.transition(this.combatState()));
-   return;
-  }
-  this.notify('艾莉丝：护盾恢复了。开工作台再配一份，回来还有机会。');
- }
- if(this.noticeSeconds===0&&this.lessonQueue?.length){
-  this.noticeSeconds=13;
-  this.dialogue.openLines([this.lessonQueue.shift()],STATES.DIALOGUE,()=>this.transition(this.combatState()));
+  this.notify('护盾挡住了箭。艾莉丝：打开工作台搭配餐盘，缺食材就领补给。',4);
+ }else if(this.time>8&&this.toastTime<=0&&this.noticeSeconds===0&&this.lessonQueue.length){
+  this.noticeSeconds=10;
+  const lesson=this.lessonQueue.shift();
+  this.notify('艾莉丝 · '+lesson.title+'｜'+lesson.text,4);
  }
 };
 

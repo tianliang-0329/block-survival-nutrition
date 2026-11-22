@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>方块突围 · V6.2 饥饿值危机</title>
+  <title>方块突围 · V6.3 饥饿值危机</title>
   <link rel="stylesheet" href="action/style.css">
 
 </head>
@@ -13,7 +13,7 @@
     <div class="command-row">
       <div class="stage"><b id="stage"></b><small id="time"></small><span id="stageDots" hidden></span></div>
       <div class="tools">
-        <button id="craft">工作台</button><button id="pause" aria-label="暂停">暂停</button>
+        <button id="upgrade" hidden>强化</button><button id="craft">工作台</button><button id="pause" aria-label="暂停">暂停</button>
         <button id="sfx" hidden>音效 开</button><button id="music" hidden>音乐 开</button><b id="stats" hidden></b>
       </div>
     </div>
@@ -32,8 +32,11 @@
       <div class="progress"><span id="level"></span><div class="bar xp"><i id="xp"></i></div></div>
       <div class="dash"><span id="dashText"></span><div class="bar"><i id="dash"></i></div></div>
     </div>
-    <div id="touch"><div id="stick" aria-label="移动摇杆"><i id="knob"></i></div><button id="fire">拉弓</button><button id="dashButton">冲刺</button></div>
   </footer>
+  <div id="touch" aria-label="触屏操作">
+    <div id="stick" aria-label="拖动摇杆移动"><i id="knob"></i></div>
+    <div class="touch-actions"><button id="fire" aria-label="按住攻击"><span>攻击</span><small>按住连射</small></button><button id="dashButton">冲刺</button></div>
+  </div>
   <div id="combo" hidden></div>
   <section id="overlay" aria-label="游戏面板"></section>
 </main>

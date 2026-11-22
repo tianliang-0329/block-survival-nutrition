@@ -9,50 +9,55 @@ class Particle{constructor(x,y,color,speed=100,life=.4){let a=rand(0,Math.PI*2),
 const input={keys:new Set(),mx:W/2+100,my:H/2,fire:false,touchFire:false,jx:0,jy:0};
 const upgrades=FOOD_SKILLS.map(f=>[f.name,f.effect,f.apply,f.id]);
 class Game{
- constructor(){this.synergy=0;this.craftResume=null;this.inventory={};this.foodLevels={};this.crafted=new Set();this.unlocked=new Set();this.buffTime=0;this.shield=0;this.round=1;this.roundStart=0;this.foodFlights=[];this.ghosts=[];this.visualTime=0;this.bus=new EventBus();this.machine=new GameStateManager(this.bus);this.dialogue=new DialogueManager(this);this.director=new SpawnDirector();this.tutorial=new TutorialManager(false);this.stageFlags=new Set();this.repeatStory=true;this.transitionTimer=0;this.transitionDone=null;this.hudClock=0;this.player=new Player();this.enemies=[];this.bullets=[];this.orbs=[];this.particles=[];this.numbers=[];this.trails=[];this.time=0;this.kills=0;this.level=1;this.xp=0;this.need=24;this.combo=0;this.comboTime=0;this.spawn=1;this.shake=0;this.toastTime=0;this.bossStarted=false;this.tutorialStep=0;this.choices=[];this.boss=null}
+ constructor(){this.synergy=0;this.craftResume=null;this.inventory={};this.foodLevels={};this.crafted=new Set();this.unlocked=new Set();this.buffTime=0;this.shield=0;this.round=1;this.roundStart=0;this.foodFlights=[];this.ghosts=[];this.visualTime=0;this.bus=new EventBus();this.machine=new GameStateManager(this.bus);this.dialogue=new DialogueManager(this);this.director=new SpawnDirector();this.tutorial=new TutorialManager(false);this.stageFlags=new Set();this.transitionTimer=0;this.transitionDone=null;this.hudClock=0;this.player=new Player();this.enemies=[];this.bullets=[];this.orbs=[];this.particles=[];this.numbers=[];this.trails=[];this.time=0;this.kills=0;this.level=1;this.xp=0;this.need=24;this.combo=0;this.comboTime=0;this.spawn=1;this.shake=0;this.toastTime=0;this.bossStarted=false;this.choices=[];this.boss=null}
  get state(){return this.machine.current}
  get tutorialStep(){return this.tutorial.step}
- set tutorialStep(value){this.tutorial.step=value}
  transition(state){
   if(this.state===state){this.hud();return}
+  const wasActive=this.machine.active;
   this.machine.set(state);
-  resetControls();
+  if(!wasActive||!this.machine.active)resetControls();
   this.hud();
   if(this.machine.active)canvas.focus({preventScroll:true});
  }
  combatState(){return this.bossStarted?STATES.BOSS_FIGHT:this.tutorial.enabled?STATES.TUTORIAL:STATES.PLAYING}
  signal(name,data){this.bus.emit(name,data);this.tutorial.event(name)}
- start(tutorial=true){const repeat=this.repeatStory,bus=this.bus;Object.assign(this,new Game());this.bus=bus;this.machine.bus=bus;this.dialogue.game=this;this.repeatStory=repeat;this.tutorial=new TutorialManager(tutorial);audio.start();audio.play('start');this.storyOutcome=null;this.enemies.push(new Enemy('normal',W/2+140,H/2));this.bus.emit('GAME_STARTED');$('overlay').innerHTML='';const begin=()=>{this.transition(this.combatState());this.notify('艾莉丝：先练走位和射箭，等安全了再去捡掉落。')};if(this.repeatStory)this.dialogue.open('intro',STATES.INTRO,begin);else begin();this.hud()}
+ start(tutorial=true){const bus=this.bus;Object.assign(this,new Game());this.bus=bus;this.machine.bus=bus;this.dialogue.game=this;this.tutorial=new TutorialManager(tutorial);audio.start();audio.play('start');this.storyOutcome=null;this.enemies.push(new Enemy('normal',W/2+140,H/2));this.bus.emit('GAME_STARTED');$('overlay').innerHTML='';this.transition(this.combatState());this.hud()}
  skipTutorial(){this.tutorial.skip();if(this.machine.active)this.transition(this.combatState())}
  uiUpdate(dt){this.visualTime+=dt;audio.update(dt,this);for(const f of this.foodFlights)f.life-=dt;this.foodFlights=this.foodFlights.filter(f=>f.life>0);for(const f of this.ghosts)f.life-=dt;this.ghosts=this.ghosts.filter(f=>f.life>0);this.effects(dt);this.dialogue.update(dt);this.toastTime-=dt;if(this.toastTime<=0)$('toast').textContent='';this.shake=Math.max(0,this.shake-dt*35);if(this.transitionTimer>0){this.transitionTimer-=dt;if(this.transitionTimer<=0){const cb=this.transitionDone;this.transitionDone=null;cb?.()}}}
 
- notify(s){$('toast').textContent=s;this.toastTime=3.5}
+ notify(s,seconds=3.5){$('toast').textContent=s;this.toastTime=seconds}
  burst(x,y,color,count=10,speed=100){for(let i=0;i<count&&this.particles.length<450;i++)this.particles.push(new Particle(x,y,color,speed))}
  number(x,y,text,color='#f5ecc8',big=false){this.numbers.push({x,y,text,color,big,life:.8});if(this.numbers.length>90)this.numbers.shift()}
- dash(){const p=this.player;if(!this.machine.active||p.dashCd>0||(this.tutorial.enabled&&this.tutorialStep<2))return;let x=(input.keys.has('d')||input.keys.has('arrowright')?1:0)-(input.keys.has('a')||input.keys.has('arrowleft')?1:0)+input.jx,y=(input.keys.has('s')||input.keys.has('arrowdown')?1:0)-(input.keys.has('w')||input.keys.has('arrowup')?1:0)+input.jy;let l=Math.hypot(x,y);p.dx=l?x/l:Math.cos(p.angle);p.dy=l?y/l:Math.sin(p.angle);p.dashing=.18;p.inv=.27;p.dashCd=p.dashMax||2.5;audio.play('dash');this.signal('PLAYER_DASHED')}
+ dash(){const p=this.player;if(!this.machine.active||p.dashCd>0)return;let x=(input.keys.has('d')||input.keys.has('arrowright')?1:0)-(input.keys.has('a')||input.keys.has('arrowleft')?1:0)+input.jx,y=(input.keys.has('s')||input.keys.has('arrowdown')?1:0)-(input.keys.has('w')||input.keys.has('arrowup')?1:0)+input.jy;let l=Math.hypot(x,y);p.dx=l?x/l:Math.cos(p.angle);p.dy=l?y/l:Math.sin(p.angle);p.dashing=.18;p.inv=.27;p.dashCd=p.dashMax||2.5;audio.play('dash');this.signal('PLAYER_DASHED')}
  hurt(d,x,y){let p=this.player;if(!this.machine.active||p.inv>0)return;const blocked=Math.min(this.shield,d);this.shield-=blocked;d-=blocked;p.hp=Math.max(0,p.hp-d);p.inv=1;this.shake=9;let a=Math.atan2(p.y-y,p.x-x);p.x=clamp(p.x+Math.cos(a)*22,35,W-35);p.y=clamp(p.y+Math.sin(a)*22,85,H-50);this.signal('PLAYER_DAMAGED',d);audio.play('hurt');this.burst(p.x,p.y,'#ff857c',18);this.number(p.x,p.y,'−'+d,'#ff8f85',true);if(p.hp<=0)this.end(false)}
  hit(e,b){if(!this.machine.active||e.dead)return;e.hp-=b.damage;e.flash=.1;const a=Math.atan2(b.vy,b.vx);e.kx+=Math.cos(a)*155;e.ky+=Math.sin(a)*155;this.number(e.x,e.y-e.r,Math.round(b.damage)+(b.crit?' 暴击!':''),b.crit?'#ffda77':'#f2f4da',b.crit);this.burst(b.x,b.y,b.crit?'#ffe38c':'#e2edba',6);audio.play(b.crit?'crit':'hit');if(b.crit)this.shake=3;if(e.hp<=0)this.kill(e)}
- kill(e){if(e.dead)return;e.dead=true;this.ghosts.push({x:e.x,y:e.y,type:e.type,r:e.r,life:.28});this.kills++;this.signal('ENEMY_KILLED',e);this.combo=this.comboTime>0?this.combo+1:1;this.comboTime=3;audio.play('death');this.burst(e.x,e.y,e.color,20,180);if(e.type==='boss'){this.clearRound();return}this.xp+=e.xp; if(Math.random()<.22){const pool=this.round===1?['potato','carrot','apple','fish','bread']:this.round===2?['beet','chicken','berries','potato','milk']:['fish','carrot','milk','apple','potato'];const id=pool[Math.floor(Math.random()*pool.length)];if(id!=='bread'||(this.breadDrops||0)<2){if(id==='bread')this.breadDrops=(this.breadDrops||0)+1;const o=new Orb(e.x,e.y,0);o.id=id;this.orbs.push(o)}}if(this.machine.active&&this.xp>=this.need)this.levelup();if(this.combo%5===0){this.notify(this.combo+' 连击 · 势不可挡');this.shake=4}}
- gain(n,id="bread"){if(!this.machine.active)return;this.collectFood(id);this.xp+=n;audio.play('xp');this.signal('ORB_COLLECTED',n);if(this.foodFlights.length<5)this.foodFlights.push({id,x:this.player.x,y:this.player.y,life:.65});if(this.xp>=this.need)this.levelup()}
- levelup(){this.levelResume=this.combatState();this.transition(STATES.LEVEL_UP);this.signal('PLAYER_LEVEL_UP');this.choices=[...upgrades].filter(u=>(this.foodLevels[u[3]]||0)<5).sort(()=>Math.random()-.5).slice(0,3);audio.play('up');this.burst(this.player.x,this.player.y,'#e5ff9c',50,240);$('overlay').innerHTML=`<div class="panel"><div class="eyebrow">LEVEL UP · ${this.level+1}</div><h2>营养补给核心 · 选择食品</h2><p>${this.level===1?STORY.firstUpgrade:"幻想强化立即生效；营养知识描述现实食物"}</p><div class="cards">${this.choices.map((u,i)=>`<button class="card rarity-${i}" data-choice="${i}">${assets.html(u[3],"upgrade-icon")}<small class="rarity">${["实用","精制","珍藏"][i]}</small><strong>${u[0]}</strong><small>${u[1]}</small><small class="knowledge">现实 · ${FOOD_KNOWLEDGE[u[3]].knowledge}</small></button>`).join('')}</div></div>`}
- choose(i){if(this.state!=='levelup'||!this.choices[i])return;const u=this.choices[i];u[2](this.player,this);this.foodLevels[u[3]]=(this.foodLevels[u[3]]||0)+1;this.unlockFood(u[3]);this.xp-=this.need;this.level++;this.need=Math.round(this.need*1.24);this.signal('UPGRADE_SELECTED',u[0]);this.transition(this.combatState());this.player.inv=1;$('overlay').innerHTML='';this.notify(u[0]+' · '+u[1]);this.burst(this.player.x,this.player.y,'#d5ff97',50,240);if(this.xp>=this.need)this.levelup();this.hud()}
+ kill(e){if(e.dead)return;e.dead=true;this.ghosts.push({x:e.x,y:e.y,type:e.type,r:e.r,life:.28});this.kills++;this.signal('ENEMY_KILLED',e);this.combo=this.comboTime>0?this.combo+1:1;this.comboTime=3;audio.play('death');this.burst(e.x,e.y,e.color,20,180);if(e.type==='boss'){this.clearRound();return}this.addExperience(e.xp); if(Math.random()<.22){const pool=this.round===1?['potato','carrot','apple','fish','bread']:this.round===2?['beet','chicken','berries','potato','milk']:['fish','carrot','milk','apple','potato'];const id=pool[Math.floor(Math.random()*pool.length)];if(id!=='bread'||(this.breadDrops||0)<2){if(id==='bread')this.breadDrops=(this.breadDrops||0)+1;const o=new Orb(e.x,e.y,0);o.id=id;this.orbs.push(o)}}if(this.combo%5===0){this.notify(this.combo+' 连击 · 势不可挡');this.shake=4}}
+ gain(n,id="bread"){if(!this.machine.active)return;this.collectFood(id);this.addExperience(n);audio.play('xp');this.signal('ORB_COLLECTED',n);if(this.foodFlights.length<5)this.foodFlights.push({id,x:this.player.x,y:this.player.y,life:.65})}
+ addExperience(amount){
+  const ready=this.xp>=this.need;
+  this.xp+=amount;
+  if(!ready&&this.xp>=this.need)this.hud();
+ }
+ levelup(){if(!this.machine.active||this.xp<this.need)return;this.transition(STATES.LEVEL_UP);this.signal('PLAYER_LEVEL_UP');this.choices=this.choices.length?this.choices:[...upgrades].filter(u=>(this.foodLevels[u[3]]||0)<5).sort(()=>Math.random()-.5).slice(0,3);audio.play('up');this.burst(this.player.x,this.player.y,'#e5ff9c',50,240);$('overlay').innerHTML=`<div class="panel"><div class="eyebrow">LEVEL UP · ${this.level+1}</div><h2>营养补给核心 · 选择食品</h2><button data-close-upgrade>稍后再选</button><p>${this.level===1?STORY.firstUpgrade:"幻想强化立即生效；营养知识描述现实食物"}</p><div class="cards">${this.choices.map((u,i)=>`<button class="card rarity-${i}" data-choice="${i}">${assets.html(u[3],"upgrade-icon")}<small class="rarity">${["实用","精制","珍藏"][i]}</small><strong>${u[0]}</strong><small>${u[1]}</small><small class="knowledge">现实 · ${FOOD_KNOWLEDGE[u[3]].knowledge}</small></button>`).join('')}</div></div>`}
+ choose(i){if(this.state!=='levelup'||!this.choices[i])return;const u=this.choices[i];u[2](this.player,this);this.foodLevels[u[3]]=(this.foodLevels[u[3]]||0)+1;this.unlockFood(u[3]);this.xp-=this.need;this.level++;this.choices=[];this.need=Math.round(this.need*1.24);this.signal('UPGRADE_SELECTED',u[0]);this.transition(this.combatState());this.player.inv=1;$('overlay').innerHTML='';this.notify(u[0]+' · '+u[1]);this.burst(this.player.x,this.player.y,'#d5ff97',50,240);this.hud()}
  unlockFood(id){if(!FOOD_KNOWLEDGE[id])return;this.unlocked.add(id);try{const saved=JSON.parse(localStorage.getItem('nutrition-codex')||'[]');localStorage.setItem('nutrition-codex',JSON.stringify([...new Set([...saved,id])]))}catch{}}
  collectFood(id){this.inventory[id]=(this.inventory[id]||0)+1;if(!this.unlocked.has(id)){this.unlockFood(id);this.notify('艾莉丝：'+FOOD_KNOWLEDGE[id].knowledge)}}
- openCraft(){if(!this.machine.active)return;this.craftResume=this.state;this.transition(STATES.PAUSED);this.craftSlots=[];this.renderCraft()}
+ openCraft(){if(!this.machine.active)return;this.signal('CRAFT_OPENED');this.craftResume=this.combatState();this.transition(STATES.PAUSED);this.craftSlots=[];this.renderCraft()}
  renderCraft(){const available=Object.keys(this.inventory).filter(id=>this.inventory[id]>0);$('overlay').innerHTML=`<div class="panel crafting"><div class="eyebrow">NUTRITION CORE · 营养补给核心</div><h2>工作台 · 合理搭配</h2><p>点击食品放入三格；每项配方每局合成一次。</p><div class="craft-slots">${[0,1,2].map(i=>`<button data-remove-food="${i}">${this.craftSlots[i]?assets.html(this.craftSlots[i]):'+'}</button>`).join('')}<b> → </b>${assets.html('workbench')}</div><div class="food-grid">${available.map(id=>`<button data-add-food="${id}">${assets.html(id)}<small>${FOOD_KNOWLEDGE[id].name} ×${this.inventory[id]}</small></button>`).join('')}</div><div class="recipes">${RECIPES.map(r=>`<p>${this.crafted.has(r.id)?'✓ ':''}${r.name}：${r.foods.map(id=>FOOD_KNOWLEDGE[id].name).join(' + ')}</p>`).join('')}</div><p id="craftResult">组合转化为幻想战斗能力</p><button class="primary" data-make-meal>合成</button><button data-close-craft>返回战斗</button></div>`}
  craft(){const r=RECIPES.find(r=>r.foods.length===this.craftSlots.length&&r.foods.every(id=>this.craftSlots.includes(id)));if(!r||this.crafted.has(r.id)||!r.foods.every(id=>this.inventory[id]>0)){$('craftResult').textContent='配方不匹配、食材不足或本局已合成';return false}r.foods.forEach(id=>this.inventory[id]--);this.crafted.add(r.id);this.lastMeal=r.foods;r.apply(this);this.craftSlots=[];this.renderCraft();$('craftResult').innerHTML='<div class=craft-flight>'+r.foods.map(id=>assets.html(id)).join('')+'</div><b>BALANCED MEAL!</b><br>艾莉丝：'+r.knowledge;audio.play('craft');this.burst(this.player.x,this.player.y,'#fff1a0',70,250);return true}
  closeCraft(){if(!this.craftResume)return;const state=this.craftResume;this.craftResume=null;this.transition(state);$('overlay').innerHTML=''}
- pause(){if(this.craftResume){this.closeCraft();return}if(this.machine.active){this.resumeState=this.state;this.transition(STATES.PAUSED);this.bus.emit('GAME_PAUSED');$('overlay').innerHTML='<div class="panel"><h2>休息一下</h2><button class="primary" data-resume>继续战斗</button><p>音量 <input id="volume" type="range" min="0" max="100" value="'+Math.round(audio.volume*100)+'"></p><button data-story>重复剧情：'+(this.repeatStory?'开':'关')+'</button></div>';$('volume').oninput=e=>audio.setVolume(e.target.value/100)}else if(this.state===STATES.PAUSED){this.transition(this.resumeState);this.bus.emit('GAME_RESUMED');$('overlay').innerHTML=''}}
+ pause(){if(this.craftResume){this.closeCraft();return}if(this.machine.active){this.resumeState=this.state;this.transition(STATES.PAUSED);this.bus.emit('GAME_PAUSED');$('overlay').innerHTML='<div class="panel"><h2>休息一下</h2><button class="primary" data-resume>继续战斗</button><p>音量 <input id="volume" type="range" min="0" max="100" value="'+Math.round(audio.volume*100)+'"></p></div>';$('volume').oninput=e=>audio.setVolume(e.target.value/100)}else if(this.state===STATES.PAUSED){this.transition(this.resumeState);this.bus.emit('GAME_RESUMED');$('overlay').innerHTML=''}}
  bossStart(){this.bossStarted=true;this.transition(STATES.BOSS_FIGHT);this.bus.emit('BOSS_SPAWNED');this.player.inv=1.5;this.boss=new Enemy('boss',W/2,160);Object.assign(this.boss,{hp:LEVELS[this.round-1].hp,maxHp:LEVELS[this.round-1].hp,speed:LEVELS[this.round-1].speed,lockAngle:0,attackType:'ring',chargeTime:0});this.enemies.push(this.boss);this.notify('艾莉丝：小怪还在，边走边拉弓，别让它们围住你。');this.shake=10;audio.play('boss')}
  clearRound(){this.bus.emit('BOSS_DEFEATED',this.round);if(this.round===3){this.end(true);return}this.bullets=[];this.enemies=[];this.transition(STATES.STAGE_TRANSITION);audio.play('win');$('overlay').innerHTML=`<div class="panel clear-panel"><div class="eyebrow">CHECKPOINT CLEARED</div><h2>第${this.round}关 · 已突破</h2><div class="reward-food">${assets.html('bread')}${assets.html('apple')}${assets.html('soup')}</div><p>营地补给 · 回复25生命<br>强化全部保留，下一道守卫更强。</p><button class="primary" data-next-round>前往${LEVELS[this.round].name} →</button></div>`;}
  nextRound(){if(this.state!==STATES.STAGE_TRANSITION||!this.boss?.dead)return;this.round++;this.roundStart=this.time;this.bossStarted=false;this.boss=null;this.orbs=[];this.stageFlags.clear();this.player.hp=Math.min(this.player.maxHp,this.player.hp+25);this.player.x=W/2;this.player.y=H/2;this.player.inv=1.5;this.spawn=.6;$('overlay').innerHTML='';this.transition(this.combatState());this.notify('艾莉丝：'+CHAPTER_KNOWLEDGE[this.round-1][0])}
  end(win){if(!this.machine.active)return;this.transition(win?STATES.VICTORY:STATES.DEFEAT);this.bus.emit(win?'GAME_VICTORY':'GAME_DEFEAT');if(win)this.bus.emit('BOSS_DEFEATED');else this.bus.emit('PLAYER_DIED');audio.play(win?'win':'lose');this.burst(this.player.x,this.player.y,win?'#dbed8d':'#e58379',100,300);$('overlay').innerHTML=`<div class="panel"><div class="eyebrow">${win?'ARENA CLEARED':'TRY AGAIN'}</div><div class="reward-food">${assets.html(win?"cake":"mushroom")}${assets.html(win?"bread":"soup")}</div><h1>${win?'突围成功':'本次止步'}</h1><p>${win?STORY.victory:STORY.defeat}</p><div class="result"><span><b>${this.kills}</b>击杀</span><span><b>${this.level}</b>等级</span><span><b>${Math.floor(this.time)}s</b>存活</span></div><p>食品强化：${Object.keys(this.foodLevels).map(id=>FOOD_KNOWLEDGE[id].name).join("、")||"无"}<br>已合成 ${this.crafted.size} · 解锁知识 ${this.unlocked.size}<br>末影龙：${win?"已击败":"尚未击败"}</p><button data-guide>查看食品图鉴</button><button class="primary" data-restart>再来一局</button></div>`;if(win){const result=$('overlay').innerHTML;this.dialogue.open('ending',STATES.DIALOGUE,()=>{this.transition(STATES.VICTORY);$('overlay').innerHTML=result})}}
  updateBoss(e,dt,a){const config=LEVELS[this.round-1];e.attack-=dt;if(e.chargeTime>0){e.chargeTime-=dt;e.x+=Math.cos(e.lockAngle)*410*dt;e.y+=Math.sin(e.lockAngle)*410*dt;this.trails.push({x:e.x,y:e.y,life:.13});return}if(e.attack<=0&&e.wind<=0){e.wind=1.15;e.phase++;e.lockAngle=a;e.attack=config.gap;e.attackType=e.phase%3===2?'charge':e.phase%3===0?'fan':'ring'}if(e.wind>0){e.wind-=dt;if(e.wind<=0){if(e.attackType==='charge'){e.chargeTime=.48;audio.play('dash')}else{const count=e.attackType==='ring'?config.count:5+this.round*2;for(let j=0;j<count;j++){let angle=e.attackType==='ring'?j*Math.PI*2/count+e.phase*.28:e.lockAngle+(j-(count-1)/2)*.16;this.bullets.push(new Bullet(e.x,e.y,angle,15,0,true))}if(this.round>1&&e.attackType==='ring')for(let j=-1;j<=1;j++)this.bullets.push(new Bullet(e.x,e.y,e.lockAngle+j*.19,18,0,true));audio.play('bossAttack')}this.shake=4}}}
- update(dt){if(!this.machine.active)return;if(this.director.stages(this))return;this.time+=dt;this.buffTime=Math.max(0,this.buffTime-dt);this.comboTime-=dt;let p=this.player;p.inv=Math.max(0,p.inv-dt);p.dashCd=Math.max(0,p.dashCd-dt);p.shot-=dt;
+ update(dt){if(!this.machine.active)return;this.director.stages(this);this.time+=dt;this.buffTime=Math.max(0,this.buffTime-dt);this.comboTime-=dt;let p=this.player;p.inv=Math.max(0,p.inv-dt);p.dashCd=Math.max(0,p.dashCd-dt);p.shot-=dt;
  let x=(input.keys.has('d')||input.keys.has('arrowright')?1:0)-(input.keys.has('a')||input.keys.has('arrowleft')?1:0)+input.jx,y=(input.keys.has('s')||input.keys.has('arrowdown')?1:0)-(input.keys.has('w')||input.keys.has('arrowup')?1:0)+input.jy,l=Math.hypot(x,y);if(l>1){x/=l;y/=l}if(l>.1)this.signal('PLAYER_MOVED');
  if(p.dashing>0){p.dashing-=dt;x=p.dx*3.8;y=p.dy*3.8;this.trails.push({x:p.x,y:p.y,life:.2})}p.x=clamp(p.x+x*p.speed*dt,35,W-35);p.y=clamp(p.y+y*p.speed*dt,90,H-55);
  if(input.touchFire){let nearest=this.enemies.filter(e=>!e.dead).sort((a,b)=>dist(p,a)-dist(p,b))[0];if(nearest)p.angle=Math.atan2(nearest.y-p.y,nearest.x-p.x)}else p.angle=Math.atan2(input.my-p.y,input.mx-p.x);
- if((input.fire||input.touchFire)&&p.shot<=0&&(!this.tutorial.enabled||this.tutorialStep>=1)){p.shot=p.interval*(this.buffTime>0?.65:1);let b=new Bullet(p.x+Math.cos(p.angle)*22,p.y+Math.sin(p.angle)*22,p.angle,p.damage,p.pierce);this.bullets.push(b);this.burst(b.x,b.y,'#ffe9a6',4,65);audio.play('shot');this.signal('SHOT_FIRED')}
+ if((input.fire||input.touchFire)&&p.shot<=0){p.shot=p.interval*(this.buffTime>0?.65:1);let b=new Bullet(p.x+Math.cos(p.angle)*22,p.y+Math.sin(p.angle)*22,p.angle,p.damage,p.pierce);this.bullets.push(b);this.burst(b.x,b.y,'#ffe9a6',4,65);audio.play('shot');this.signal('SHOT_FIRED')}
  this.spawn-=dt;if(!this.bossStarted&&this.spawn<=0){this.spawn=this.director.interval(this.time-this.roundStart,this.round);if(this.enemies.length<30){let side=Math.floor(rand(0,4)),ex=side===0?40:side===1?W-40:rand(40,W-40),ey=side===2?95:side===3?H-60:rand(95,H-60);if(dist(p,{x:ex,y:ey})<150){ex=p.x<W/2?W-45:45}let type=this.time-this.roundStart<12&&this.round===1?'normal':Math.random()<.3?'heavy':Math.random()<.48?'fast':'normal';const enemy=new Enemy(type,ex,ey);enemy.art=ENEMY_ART[this.round-1][Math.floor(Math.random()*ENEMY_ART[this.round-1].length)];this.enemies.push(enemy);this.bus.emit('ENEMY_SPAWNED',enemy)}}
  for(const e of this.enemies){if(e.dead)continue;e.flash=Math.max(0,e.flash-dt);let a=Math.atan2(p.y-e.y,p.x-e.x);if(e.type==='boss'){this.updateBoss(e,dt,a);}if(!(e.wind>0)&&!(e.chargeTime>0)){e.x+=Math.cos(a)*e.speed*dt;e.y+=Math.sin(a)*e.speed*dt}e.x=clamp(e.x+e.kx*dt,e.r+20,W-e.r-20);e.y=clamp(e.y+e.ky*dt,85+e.r,H-40-e.r);e.kx*=Math.exp(-dt*12);e.ky*=Math.exp(-dt*12);if(dist(e,p)<e.r+p.r)this.hurt(e.damage,e.x,e.y);if(this.state==='defeat')break}
  if(!this.machine.active){this.hud();return;}
@@ -69,15 +74,22 @@ const game=new Game();
 let view={scale:1,x:0,y:0,width:W,height:H};
 function resize(){
  const w=Math.max(1,canvas.clientWidth),h=Math.max(1,canvas.clientHeight);
+ const oldWidth=W,oldHeight=H;
  const portrait=innerWidth<700&&innerWidth<innerHeight;
+ const handheldLandscape=matchMedia('(pointer: coarse) and (orientation: landscape)').matches;
  W=portrait?620:1100;
- H=portrait?Math.max(580,Math.min(1000,Math.round(h*W/w))):720;
+ H=portrait?920:handheldLandscape?540:720;
  const dpr=Math.min(devicePixelRatio||1,2),scale=Math.min(w/W,h/H);
  canvas.width=w*dpr;canvas.height=h*dpr;
  view={width:w,height:h,dpr,scale,x:(w-W*scale)/2,y:(h-H*scale)/2};
- for(const e of [game.player,...game.enemies,...game.orbs]){
-  e.x=clamp(e.x,45,W-45);e.y=clamp(e.y,100,H-65);
+ if(W===oldWidth&&H===oldHeight)return;
+ const sx=W/oldWidth,sy=H/oldHeight;
+ for(const e of [game.player,...game.enemies,...game.orbs,...game.bullets,...(game.hazards||[])]){
+  e.x*=sx;
+  e.y*=sy;
  }
+ game.player.x=clamp(game.player.x,35,W-35);
+ game.player.y=clamp(game.player.y,90,H-55);
 }
 function box(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),w,h)}
 let last=0;function frame(t){const dt=Math.min((t-last)/1000||0,.04);last=t;game.uiUpdate(dt);game.update(dt);if(typeof draw==='function')draw();requestAnimationFrame(frame)}
@@ -102,6 +114,7 @@ window.addEventListener('keydown',event=>{
  if(key==='escape'){
   if(event.repeat)return;
   if(game.dialogue.done)game.dialogue.finish();
+  else if(game.state===STATES.LEVEL_UP)closeUpgrade();
   else game.pause();
   return;
  }
@@ -115,6 +128,7 @@ window.addEventListener('keydown',event=>{
  if(event.repeat)return;
  if(key===' ')game.dash();
  if(key==='c')game.openCraft();
+ if(key==='u')game.levelup();
  if(key==='m'){audio.muted=!audio.muted;syncAudio()}
 });
 window.addEventListener('keyup',event=>input.keys.delete(controlKey(event)));
@@ -125,15 +139,14 @@ function pauseWhenInactive(){
 window.addEventListener('blur',pauseWhenInactive);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseWhenInactive()});
 function syncAudio(){$('sfx').textContent='音效 '+(audio.sfx&&!audio.muted?'开':'关');$('music').textContent='音乐 '+(audio.music&&!audio.muted?'开':'关')}
-$('sfx').onclick=()=>{if(audio.muted){audio.muted=false;audio.sfx=true}else audio.sfx=!audio.sfx;syncAudio()};$('music').onclick=()=>{if(audio.muted){audio.muted=false;audio.music=true}else audio.music=!audio.music;syncAudio()};$('pause').onclick=()=>game.pause();$('skip').onclick=()=>game.skipTutorial();$('overlay').onclick=e=>{const el=e.target.closest('button');if(!el)return;if(el.hasAttribute('data-next-round'))game.nextRound();if(el.hasAttribute('data-next'))game.dialogue.next();if(el.hasAttribute('data-skip-dialogue'))game.dialogue.finish();if(el.hasAttribute('data-story')){game.repeatStory=!game.repeatStory;el.textContent='重复剧情：'+(game.repeatStory?'开':'关')}if(el.hasAttribute('data-start'))game.start(true);if(el.hasAttribute('data-restart'))game.start(false);if(el.hasAttribute('data-resume'))game.pause();if(el.dataset.choice!==undefined)game.choose(+el.dataset.choice)};
+$('sfx').onclick=()=>{if(audio.muted){audio.muted=false;audio.sfx=true}else audio.sfx=!audio.sfx;syncAudio()};$('music').onclick=()=>{if(audio.muted){audio.muted=false;audio.music=true}else audio.music=!audio.music;syncAudio()};$('pause').onclick=()=>game.pause();$('skip').onclick=()=>game.skipTutorial();$('overlay').onclick=e=>{const el=e.target.closest('button');if(!el)return;if(el.hasAttribute('data-next-round'))game.nextRound();if(el.hasAttribute('data-next'))game.dialogue.next();if(el.hasAttribute('data-skip-dialogue'))game.dialogue.finish();if(el.hasAttribute('data-restart'))game.start(false);if(el.hasAttribute('data-resume'))game.pause();if(el.dataset.choice!==undefined)game.choose(+el.dataset.choice)};
 
-let stickId=null,fireId=null;
+let stickId=null,fireId=null,stickOrigin=null;
 const stick=$('stick'),fireButton=$('fire');
 function stickMove(event){
  if(event.pointerId!==stickId)return;
- const r=stick.getBoundingClientRect();
- const x=event.clientX-r.left-r.width/2,y=event.clientY-r.top-r.height/2;
- const radius=r.width*.31,distance=Math.hypot(x,y);
+ const x=event.clientX-stickOrigin.x,y=event.clientY-stickOrigin.y;
+ const radius=stickOrigin.radius,distance=Math.hypot(x,y);
  const scale=distance<2?0:Math.min(1,radius/distance);
  input.jx=x*scale/radius;
  input.jy=y*scale/radius;
@@ -143,6 +156,7 @@ function releaseStick(event){
  if(event&&event.pointerId!==stickId)return;
  const id=stickId;
  stickId=null;
+ stickOrigin=null;
  input.jx=input.jy=0;
  $('knob').style.transform='';
  if(id!==null&&stick.hasPointerCapture(id))stick.releasePointerCapture(id);
@@ -151,12 +165,14 @@ function releaseFire(event){
  if(event&&event.pointerId!==fireId)return;
  const id=fireId;
  fireId=null;
+ fireButton.classList.remove('is-pressed');
  input.touchFire=false;
  if(id!==null&&fireButton.hasPointerCapture(id))fireButton.releasePointerCapture(id);
 }
 function resetControls(){
  input.keys.clear();
  input.fire=false;
+ input.touchShotQueued=false;
  releaseStick();
  releaseFire();
 }
@@ -164,6 +180,8 @@ stick.onpointerdown=event=>{
  if(!game.machine.active||stickId!==null)return;
  event.preventDefault();
  stickId=event.pointerId;
+ const bounds=stick.getBoundingClientRect();
+ stickOrigin={x:bounds.left+bounds.width/2,y:bounds.top+bounds.height/2,radius:bounds.width*.31};
  stick.setPointerCapture(stickId);
  stickMove(event);
 };
@@ -173,7 +191,9 @@ fireButton.onpointerdown=event=>{
  if(!game.machine.active||fireId!==null)return;
  event.preventDefault();
  fireId=event.pointerId;
+ input.touchShotQueued=true;
  input.touchFire=true;
+ fireButton.classList.add('is-pressed');
  fireButton.setPointerCapture(fireId);
 };
 fireButton.onpointerup=fireButton.onpointercancel=fireButton.onlostpointercapture=releaseFire;
