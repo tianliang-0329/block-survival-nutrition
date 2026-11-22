@@ -1,0 +1,298 @@
+[
+  {
+    "id": "bread",
+    "path": "assets/minecraft/bread.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/bread.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "carrot",
+    "path": "assets/minecraft/carrot.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/carrot.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "apple",
+    "path": "assets/minecraft/apple.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/apple.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "fish",
+    "path": "assets/minecraft/fish.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/cooked_salmon.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "potato",
+    "path": "assets/minecraft/potato.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/baked_potato.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "milk",
+    "path": "assets/minecraft/milk.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/milk_bucket.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "steak",
+    "path": "assets/minecraft/steak.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/cooked_porkchop.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "chicken",
+    "path": "assets/minecraft/chicken.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/cooked_chicken.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "berries",
+    "path": "assets/minecraft/berries.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/sweet_berries.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "beet",
+    "path": "assets/minecraft/beet.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/beetroot.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "soup",
+    "path": "assets/minecraft/soup.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/mushroom_stew.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "cake",
+    "path": "assets/minecraft/cake.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/cake.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "grass",
+    "path": "assets/minecraft/grass.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/block/grass_block_top.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "stone",
+    "path": "assets/minecraft/stone.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/block/stone.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "plank",
+    "path": "assets/minecraft/plank.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/block/oak_planks.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "workbench",
+    "path": "assets/minecraft/workbench.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/block/crafting_table_top.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "furnace",
+    "path": "assets/minecraft/furnace.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/block/furnace_front.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "netherrack",
+    "path": "assets/minecraft/netherrack.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/block/netherrack.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "endstone",
+    "path": "assets/minecraft/endstone.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/block/end_stone.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "obsidian",
+    "path": "assets/minecraft/obsidian.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/block/obsidian.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "steveSkin",
+    "path": "assets/minecraft/steveSkin.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/entity/player/wide/steve.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "alexSkin",
+    "path": "assets/minecraft/alexSkin.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/entity/player/slim/alex.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "zombieSkin",
+    "path": "assets/minecraft/zombieSkin.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/entity/zombie/zombie.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "skeletonSkin",
+    "path": "assets/minecraft/skeletonSkin.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/entity/skeleton/skeleton.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "creeperSkin",
+    "path": "assets/minecraft/creeperSkin.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/entity/creeper/creeper.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "spiderSkin",
+    "path": "assets/minecraft/spiderSkin.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/entity/spider/spider.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "blazeSkin",
+    "path": "assets/minecraft/blazeSkin.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/entity/blaze.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "piglinSkin",
+    "path": "assets/minecraft/piglinSkin.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/entity/piglin/piglin.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "endermanSkin",
+    "path": "assets/minecraft/endermanSkin.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/entity/enderman/enderman.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "dragonSkin",
+    "path": "assets/minecraft/dragonSkin.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/entity/enderdragon/dragon.png",
+    "version": "Java 1.21.4",
+    "commit": "58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2",
+    "frames": 1
+  },
+  {
+    "id": "bow",
+    "path": "assets/minecraft/bow.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/bow.png",
+    "version": "Java 1.21.4",
+    "authorization": "User expressly authorized redistribution including GitHub; not an open-source grant."
+  },
+  {
+    "id": "bow0",
+    "path": "assets/minecraft/bow0.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/bow_pulling_0.png",
+    "version": "Java 1.21.4",
+    "authorization": "User expressly authorized redistribution including GitHub; not an open-source grant."
+  },
+  {
+    "id": "bow1",
+    "path": "assets/minecraft/bow1.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/bow_pulling_1.png",
+    "version": "Java 1.21.4",
+    "authorization": "User expressly authorized redistribution including GitHub; not an open-source grant."
+  },
+  {
+    "id": "bow2",
+    "path": "assets/minecraft/bow2.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/bow_pulling_2.png",
+    "version": "Java 1.21.4",
+    "authorization": "User expressly authorized redistribution including GitHub; not an open-source grant."
+  },
+  {
+    "id": "arrowMC",
+    "path": "assets/minecraft/arrowMC.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/item/arrow.png",
+    "version": "Java 1.21.4",
+    "authorization": "User expressly authorized redistribution including GitHub; not an open-source grant."
+  },
+  {
+    "id": "hunger",
+    "path": "assets/minecraft/hunger.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/gui/sprites/hud/food_full.png",
+    "version": "Java 1.21.4",
+    "authorization": "User expressly authorized redistribution including GitHub; not an open-source grant."
+  },
+  {
+    "id": "heartMC",
+    "path": "assets/minecraft/heartMC.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/gui/sprites/hud/heart/full.png",
+    "version": "Java 1.21.4",
+    "authorization": "User expressly authorized redistribution including GitHub; not an open-source grant."
+  },
+  {
+    "id": "craftGUI",
+    "path": "assets/minecraft/craftGUI.png",
+    "source": "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/58d92c8cee4c7ac22d02988fb2bc3e4648af9ef2/assets/minecraft/textures/gui/container/crafting_table.png",
+    "version": "Java 1.21.4",
+    "authorization": "User expressly authorized redistribution including GitHub; not an open-source grant."
+  }
+]

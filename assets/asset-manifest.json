@@ -1,0 +1,696 @@
+{
+  "version": 4,
+  "author": "Original procedural pixel artwork",
+  "assets": [
+    {
+      "id": "bread",
+      "group": "foods",
+      "path": "assets/foods/bread.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "apple",
+      "group": "foods",
+      "path": "assets/foods/apple.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "carrot",
+      "group": "foods",
+      "path": "assets/foods/carrot.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "potato",
+      "group": "foods",
+      "path": "assets/foods/potato.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "steak",
+      "group": "foods",
+      "path": "assets/foods/steak.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "mushroom",
+      "group": "foods",
+      "path": "assets/foods/mushroom.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "melon",
+      "group": "foods",
+      "path": "assets/foods/melon.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "fish",
+      "group": "foods",
+      "path": "assets/foods/fish.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "cookie",
+      "group": "foods",
+      "path": "assets/foods/cookie.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "soup",
+      "group": "foods",
+      "path": "assets/foods/soup.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "cake",
+      "group": "foods",
+      "path": "assets/foods/cake.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "wheat",
+      "group": "foods",
+      "path": "assets/foods/wheat.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "berries",
+      "group": "foods",
+      "path": "assets/foods/berries.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "chicken",
+      "group": "foods",
+      "path": "assets/foods/chicken.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "beet",
+      "group": "foods",
+      "path": "assets/foods/beet.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "cheese",
+      "group": "foods",
+      "path": "assets/foods/cheese.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "heart",
+      "group": "ui",
+      "path": "assets/ui/heart.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "gem",
+      "group": "items",
+      "path": "assets/items/gem.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "boot",
+      "group": "items",
+      "path": "assets/items/boot.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "bolt",
+      "group": "items",
+      "path": "assets/items/bolt.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "armor",
+      "group": "items",
+      "path": "assets/items/armor.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "arrow",
+      "group": "items",
+      "path": "assets/items/arrow.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "grass",
+      "group": "environments",
+      "path": "assets/environments/grass.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "forest",
+      "group": "environments",
+      "path": "assets/environments/forest.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "stone",
+      "group": "environments",
+      "path": "assets/environments/stone.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "plank",
+      "group": "environments",
+      "path": "assets/environments/plank.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "chest",
+      "group": "environments",
+      "path": "assets/environments/chest.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "workbench",
+      "group": "environments",
+      "path": "assets/environments/workbench.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "furnace",
+      "group": "environments",
+      "path": "assets/environments/furnace.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "torch",
+      "group": "environments",
+      "path": "assets/environments/torch.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "flowers",
+      "group": "environments",
+      "path": "assets/environments/flowers.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "panel",
+      "group": "ui",
+      "path": "assets/ui/panel.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "spark",
+      "group": "effects",
+      "path": "assets/effects/spark.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "player",
+      "group": "characters",
+      "path": "assets/characters/player.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "npc",
+      "group": "characters",
+      "path": "assets/characters/npc.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "normal",
+      "group": "enemies",
+      "path": "assets/enemies/normal.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "fast",
+      "group": "enemies",
+      "path": "assets/enemies/fast.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "heavy",
+      "group": "enemies",
+      "path": "assets/enemies/heavy.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "boss",
+      "group": "enemies",
+      "path": "assets/enemies/boss.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "boss-2",
+      "group": "enemies",
+      "path": "assets/enemies/boss-2.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "boss-3",
+      "group": "enemies",
+      "path": "assets/enemies/boss-3.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "pause-mark",
+      "group": "ui",
+      "path": "assets/ui/pause-mark.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "music-mark",
+      "group": "ui",
+      "path": "assets/ui/music-mark.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "sound-mark",
+      "group": "ui",
+      "path": "assets/ui/sound-mark.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "slot",
+      "group": "ui",
+      "path": "assets/ui/slot.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "wood-panel",
+      "group": "ui",
+      "path": "assets/ui/wood-panel.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "stone-panel",
+      "group": "ui",
+      "path": "assets/ui/stone-panel.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-prototype"
+    },
+    {
+      "id": "milk",
+      "group": "foods",
+      "path": "assets/foods/milk.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "golden-apple",
+      "group": "foods",
+      "path": "assets/foods/golden-apple.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "netherrack",
+      "group": "environments",
+      "path": "assets/environments/netherrack.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "endstone",
+      "group": "environments",
+      "path": "assets/environments/endstone.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "obsidian",
+      "group": "environments",
+      "path": "assets/environments/obsidian.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "lava",
+      "group": "environments",
+      "path": "assets/environments/lava.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "dirt",
+      "group": "environments",
+      "path": "assets/environments/dirt.svg",
+      "width": 32,
+      "height": 32,
+      "frames": 1,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "zombie",
+      "group": "enemies",
+      "path": "assets/enemies/zombie.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "skeleton",
+      "group": "enemies",
+      "path": "assets/enemies/skeleton.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "piglin",
+      "group": "enemies",
+      "path": "assets/enemies/piglin.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "wither-skeleton",
+      "group": "enemies",
+      "path": "assets/enemies/wither-skeleton.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "creeper",
+      "group": "enemies",
+      "path": "assets/enemies/creeper.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "spider",
+      "group": "enemies",
+      "path": "assets/enemies/spider.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "blaze",
+      "group": "enemies",
+      "path": "assets/enemies/blaze.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "magma",
+      "group": "enemies",
+      "path": "assets/enemies/magma.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "enderman",
+      "group": "enemies",
+      "path": "assets/enemies/enderman.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "endermite",
+      "group": "enemies",
+      "path": "assets/enemies/endermite.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "shulker",
+      "group": "enemies",
+      "path": "assets/enemies/shulker.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "alex-normal",
+      "group": "characters",
+      "path": "assets/characters/alex-normal.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "alex-alert",
+      "group": "characters",
+      "path": "assets/characters/alex-alert.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "alex-surprised",
+      "group": "characters",
+      "path": "assets/characters/alex-surprised.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    },
+    {
+      "id": "alex-happy",
+      "group": "characters",
+      "path": "assets/characters/alex-happy.svg",
+      "width": 128,
+      "height": 32,
+      "frames": 4,
+      "license": "Original project artwork",
+      "status": "original-replaceable"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": "V6.1",
+  "source": "action/audio.js",
+  "implementation": "Original locally synthesized looping Web Audio buffers",
+  "tracks": {
+    "menu": 92,
+    "meadow": 144,
+    "forest": 156,
+    "end": 148,
+    "boss": 168,
+    "victory": 116,
+    "defeat": 78
+  }
+}

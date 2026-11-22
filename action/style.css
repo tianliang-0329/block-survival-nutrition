@@ -1,0 +1,213 @@
+:root {
+ color-scheme:dark;
+ --ink:#f8efda;
+ --muted:#c5d2bf;
+ --panel:#21312b;
+ --edge:#6f876f;
+ --gold:#ffdf83;
+ font:16px/1.5 "Microsoft YaHei UI","PingFang SC",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#172522;color:var(--ink)}
+img,canvas{image-rendering:pixelated}
+button,input{font:inherit}
+button{
+ min-height:40px;padding:.4rem .72rem;color:var(--ink);background:#344b3d;
+ border:2px solid #9ab099;border-right-color:#182923;border-bottom-color:#182923;
+ border-radius:0;font-weight:700;cursor:pointer;touch-action:manipulation
+}
+button:hover,button:focus-visible,summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+button:disabled{opacity:.55;cursor:default}
+.primary{background:#bcd889;color:#172522;border-top-color:#edf8c5;border-left-color:#edf8c5}
+h1,h2,h3,p{margin:0}
+h2{font-size:clamp(1.4rem,3.3vw,2rem);line-height:1.3}
+mark{color:#201c0e;background:var(--gold);padding:.1em .24em;box-decoration-break:clone}
+#game{
+ display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+ width:100%;height:100dvh;position:relative;isolation:isolate;
+ padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)
+}
+.arena-frame{min-height:0;position:relative;background:#23362d}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.battle-header,.battle-footer{background:#1b2924;padding:6px clamp(8px,3vw,34px);z-index:1}
+.battle-header{border-bottom:2px solid var(--edge)}
+.battle-footer{border-top:2px solid var(--edge)}
+.command-row,.vitals,.inventory-row{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.stage{min-width:0;line-height:1.2}
+.stage small{display:block;color:var(--muted);font-size:.85rem}
+.tools{display:flex;gap:4px;flex-shrink:0}
+#bossHud{max-width:660px;margin:5px auto 0;text-align:center;color:#ffce97;font-weight:800;font-size:.91rem}
+.bar{height:8px;background:#0e211b;border:1px solid #54725b}
+.bar i{height:100%;display:block;background:#c0db80}
+#bossHp{background:#d876ac}
+#toast{min-height:1.55em;line-height:1.3;color:var(--gold);font-weight:700;text-align:center;padding-top:4px;font-size:.94rem}
+.vitals{justify-content:center;gap:24px;margin-bottom:5px}
+.vitals b{font-size:.8rem;font-weight:700}
+.health .bar{display:none}
+#hearts,#hunger6{display:flex;gap:2px}
+#hearts img,#hunger6 img{width:clamp(12px,4vw,18px);height:auto;aspect-ratio:1}
+.empty{opacity:.25}
+.inventory-row{justify-content:center}
+.hotbar{display:flex;gap:3px}
+.stock-slot{
+ position:relative;display:grid;place-items:center;background:#121f19;border:2px inset #6f876f;
+ width:39px;height:34px;opacity:.57
+}
+.stock-slot.stocked{opacity:1}
+.stock-slot img{width:25px;height:25px}
+.stock-slot b{position:absolute;right:1px;bottom:0;line-height:1;font-size:13px;text-shadow:1px 1px #000,-1px -1px #000}
+.progress{min-width:120px;flex:0 1 220px}
+.progress,.dash{font-size:.86rem;color:var(--muted)}
+.dash{min-width:85px}
+#tutorial{margin-bottom:5px;padding:3px 7px;background:#304639;font-weight:650;font-size:.9rem}
+#tutorial button{min-height:30px;margin-left:8px;padding:.1rem .5rem}
+#touch{display:none}
+#overlay:empty{display:none}
+#overlay{
+ position:absolute;inset:0;z-index:4;display:grid;place-items:center;
+ padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));
+ background:#101d1be8
+}
+body:not([data-scene="playing"]):not([data-scene="tutorial"]):not([data-scene="boss_fight"]) .battle-header,
+body:not([data-scene="playing"]):not([data-scene="tutorial"]):not([data-scene="boss_fight"]) .battle-footer{visibility:hidden}
+.panel{
+ display:grid;gap:12px;width:min(100%,780px);max-height:100%;min-height:0;overflow:auto;
+ padding:clamp(12px,3vw,24px);background:var(--panel);border:3px solid #9ab099;
+ border-right-color:#405246;border-bottom-color:#405246;box-shadow:0 0 0 3px #101711,inset 0 0 0 2px #101711;
+ line-height:1.6
+}
+.panel h1{font-size:clamp(2.25rem,7vw,4.2rem);line-height:1.05}
+.panel p{color:var(--muted)}
+.panel button{justify-self:start}
+.panel .panel-actions,.panel-actions,.menu-secondary{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.title-panel{text-align:center;justify-items:center;gap:12px}
+.title-panel h1 span{color:var(--gold)}
+.title-panel .eyebrow,.route{display:none}
+.menu-hero{display:none}
+#audioStatus:empty{display:none}
+.settings label{display:grid;grid-template-columns:7em minmax(0,1fr);gap:8px}
+.settings input{accent-color:#bfdd91}
+.dialogue{grid-template-columns:minmax(120px,.8fr) minmax(0,1.35fr);align-items:center}
+.story-art{
+ position:relative;display:grid;place-items:end center;min-height:190px;isolation:isolate;
+ background:#2c4738;border:3px solid #18231b;overflow:hidden
+}
+.story-backdrop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1}
+.scene-overworld{background:#304e3a url("../assets/minecraft/grass.png") repeat;background-size:96px}
+.scene-end{background:#37324d url("../assets/minecraft/endstone.png") repeat;background-size:96px}
+.scene-guide{background:#294138}
+.portrait{width:108px;aspect-ratio:1;margin:10px;background-size:100%;border:3px solid #e6d1a8;box-shadow:0 0 0 3px #14221d}
+.portrait-student{background-image:url("../assets/story/student.svg")}
+.portrait-classmate{background-image:url("../assets/story/classmate.svg")}
+.portrait-steve,.portrait-alex{background-size:800%;background-position:14.285714% 14.285714%;background-origin:padding-box;background-clip:padding-box}
+.portrait-steve{background-image:url("../assets/minecraft/steveSkin.png")}
+.portrait-alex{background-image:url("../assets/minecraft/alexSkin.png")}
+.dialogue-content{display:grid;gap:10px}
+#speaker{color:#c8e69e;font-size:1rem}
+.dialogue #dialogueText{font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--ink);line-height:1.6}
+.dialogue .dialogue-advice,.knowledge-advice{border-left:4px solid #a6c681;padding-left:10px}
+.crafting,.guide{grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
+.craft-body,.codex-body{min-height:0;overflow:auto;overscroll-behavior:contain;padding:3px 6px 3px 2px}
+.craft-body>*+*{margin-top:8px}
+.recipe-goal{line-height:1.9}
+.recipe-goal mark{font-weight:750;white-space:nowrap}
+.craft-layout{display:flex;align-items:center;justify-content:center;gap:10px}
+.grid-nine{display:grid;grid-template-columns:repeat(3,40px);gap:2px}
+.mc-slot{width:40px;height:40px;min-height:0;padding:0;background:#12231a;border:2px inset #7ca181;display:grid;place-items:center}
+.mc-slot img{width:28px;height:28px}
+.result-slot{width:48px;height:48px}
+.craft-arrow{font-size:24px}
+.food-grid{display:grid;gap:5px;grid-template-columns:repeat(auto-fit,minmax(min(100%,105px),1fr))}
+.food-grid .ingredient{display:flex;align-items:center;justify-content:center;gap:4px;width:100%;padding:4px;font-size:.86rem}
+.ingredient img{width:24px;height:24px}
+.alex-bubble,.meal-highlight,.knowledge-card{
+ border:2px solid #81a476;background:#172923;padding:8px 10px
+}
+.alex-bubble b,.alex-bubble strong{color:#d8efae}
+.alex-bubble button{margin-left:4px;min-height:36px}
+.meal-highlight{display:grid;gap:3px;border-color:var(--gold)}
+.meal-highlight strong,.knowledge-card h3{color:var(--gold);font-size:1.15rem}
+.crafting .panel-actions,.guide .panel-actions{padding-top:5px;border-top:1px solid var(--edge)}
+details summary{cursor:pointer;font-weight:750;color:#d4eba7;min-height:32px}
+.codex-grid,.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,208px),1fr));gap:10px}
+.knowledge-card,.card{display:grid;gap:5px;align-content:start}
+.knowledge-card h3{display:flex;align-items:center;gap:6px}
+.knowledge-card img,.card img{width:32px;height:32px}
+.knowledge-card p,.card small{font-size:1rem}
+.game-effect,.panel .game-effect{color:#c9e19f}
+.cards .card{width:100%;text-align:left;padding:10px}
+.card .knowledge{padding:8px;background:#182b24;color:#edffce;border-left:3px solid #bfe291}
+.card .rarity{display:none}
+.result,.reward-food{display:flex;flex-wrap:wrap;gap:12px}
+.result span{padding:4px 8px;border:1px solid var(--edge)}
+.result b{margin-right:5px}
+.reward-food img{width:32px;height:32px}
+@media(max-width:680px),(pointer:coarse){
+ #touch{display:flex;align-items:center;gap:6px;justify-content:flex-end;margin-top:5px}
+ #touch button{min-height:42px}
+ #stick{display:grid;place-items:center;width:54px;height:54px;margin-right:auto;border:2px solid #95b293;background:#12271c;touch-action:none}
+ #knob{width:22px;height:22px;background:#9abd91;border:2px outset #d1f4c3;pointer-events:none}
+ #fire,#dashButton{touch-action:none}
+}
+@media(max-width:680px){
+ .command-row,.inventory-row{gap:5px}
+ .stage b{font-size:.91rem}
+ .stage small,.tools button{font-size:.77rem}
+ .tools button{padding:3px 5px}
+ #bossHud,#toast{font-size:.8rem}
+ .vitals{justify-content:space-between;gap:5px}
+ .inventory-row{display:grid;grid-template-columns:minmax(0,1fr) auto}
+ .stock-slot{width:clamp(28px,9vw,39px);height:29px}
+ .stock-slot img{width:21px;height:21px}
+ .progress{grid-column:1/-1;font-size:.76rem}
+ .dash{display:none}
+ #plateStatus{font-size:.82rem;min-height:32px}
+ #tutorial{font-size:.78rem}
+ #tutorial button{margin-left:3px}
+ .dialogue{grid-template-columns:1fr}
+ .story-art{min-height:105px}
+ .portrait{width:76px;margin:8px}
+ .dialogue-content{gap:7px}
+ .food-grid .ingredient{min-height:40px}
+}
+@media(max-height:510px){
+ .story-art{min-height:82px}
+ .portrait{width:72px;margin:5px}
+}
+.story-art,.portrait{image-rendering:pixelated}
+@media(pointer:coarse) and (orientation:landscape) and (max-height:500px){
+ .battle-header,.battle-footer{padding:3px 8px}
+ .tools button{min-height:32px;padding:2px 8px}
+ #toast{min-height:1.3em;padding-top:0}
+ .battle-footer{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px}
+ .battle-footer .vitals,.battle-footer .inventory-row,#tutorial{grid-column:1}
+ .battle-footer #touch{grid-column:2;grid-row:1/span 3;align-self:end;margin:0}
+ .battle-footer .dash{display:none}
+ .battle-footer .vitals{justify-content:flex-start;margin:0}
+ .battle-footer .inventory-row{justify-content:flex-start}
+ #tutorial{margin:0;padding:1px 5px}
+ #tutorial button{min-height:24px}
+}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@media(pointer:coarse) and (orientation:landscape) and (max-height:500px){
+ .battle-header .stage small{font-size:.78rem}
+ .battle-footer .vitals{gap:14px}
+ .battle-footer .vitals b{display:block;line-height:1.25}
+ .battle-footer #hearts img,.battle-footer #hunger6 img{width:13px}
+ .battle-footer #plateStatus{min-height:30px;font-size:.82rem;padding:2px 5px}
+ .battle-footer .stock-slot{width:32px;height:29px}
+ .battle-footer .progress{font-size:.75rem;min-width:60px}
+ .battle-footer .inventory-row{gap:6px}
+}
+#arena:focus{outline:none}
+body[data-chapter="1"] .battle-header,
+body[data-chapter="1"] .battle-footer{background:#f1f5d9;color:#294330;border-color:#91ab68}
+body[data-chapter="1"] .stage small,
+body[data-chapter="1"] .progress,
+body[data-chapter="1"] .dash{color:#3e5a36}
+body[data-chapter="1"] #toast{color:#5f4517}
+body[data-chapter="1"] #bossHud{color:#783452}
+body[data-chapter="1"] #tutorial{background:#dceab6;color:#233f2a}
+body[data-chapter="1"] .arena-frame{background:#a7ce83}
+.scene-overworld{background:#9dc767;background-image:linear-gradient(145deg,#d7e9a4 10%,#a1c972 55%,#729b51)}
