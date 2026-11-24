@@ -12,11 +12,12 @@ const effects = {
 }
 const hz = (note) => 440 * 2 ** ((note - 69) / 12)
 
-function makeLoop(ctx, score) {
-	const rate = 22050
+const sampleRate = 22050
+
+function makeLoop(score) {
+	const rate = sampleRate
 	const step = 30 / score.bpm
-	const buffer = ctx.createBuffer(1, Math.round(32 * step * rate), rate)
-	const samples = buffer.getChannelData(0)
+	const samples = new Float32Array(Math.round(32 * step * rate))
 	function voice(index, frequency, duration, volume, color) {
 		const start = Math.round(index * step * rate)
 		const length = Math.round(duration * rate)
@@ -36,82 +37,174 @@ function makeLoop(ctx, score) {
 		if (score.drums && i % 4 === 0) voice(i, 57, .12, .23, .2)
 		if (score.drums && i % 4 === 2) voice(i, 147, .064, .085, .6)
 	}
-	return buffer
+	let peak = 0
+	for (const value of samples) peak = Math.max(peak, Math.abs(value))
+	if (peak) for (let i = 0; i < samples.length; i++) samples[i] *= .87 / peak
+	return samples
+}
+
+function wavUrl(samples) {
+	const bytes = new ArrayBuffer(44 + samples.length * 2)
+	const view = new DataView(bytes)
+	const label = (offset, text) => {
+		for (let i = 0; i < text.length; i++) view.setUint8(offset + i, text.charCodeAt(i))
+	}
+	label(0, 'RIFF')
+	view.setUint32(4, bytes.byteLength - 8, true)
+	label(8, 'WAVEfmt ')
+	view.setUint32(16, 16, true)
+	view.setUint16(20, 1, true)
+	view.setUint16(22, 1, true)
+	view.setUint32(24, sampleRate, true)
+	view.setUint32(28, sampleRate * 2, true)
+	view.setUint16(32, 2, true)
+	view.setUint16(34, 16, true)
+	label(36, 'data')
+	view.setUint32(40, samples.length * 2, true)
+	for (let i = 0; i < samples.length; i++) view.setInt16(44 + i * 2, Math.round(samples[i] * 32767), true)
+	return URL.createObjectURL(new Blob([bytes], {type: 'audio/wav'}))
 }
 
 export class CanteenSound {
-	constructor(button) {
+	constructor(button, media) {
 		this.button = button
+		this.media = media
+		this.wanted = 'camp'
 		this.enabled = true
-		this.buffers = new Map()
-		try { this.enabled = localStorage.getItem('canteen-sound') !== 'off' } catch {}
+		this.status = 'idle'
+		this.revision = 0
+		this.tracks = new Map()
+		this.media.volume = .72
+		try { this.enabled = localStorage.getItem('canteen-music-v22') !== 'off' } catch {}
 		this.updateButton()
+		this.media.addEventListener('playing', () => {
+			if (this.enabled && !document.hidden && !this.media.paused) {
+				this.stopFallback()
+				this.status = 'playing'
+				this.updateButton()
+			}
+		})
+		this.media.addEventListener('pause', () => {
+			if (this.status === 'playing' && !this.fallback) {
+				this.status = 'idle'
+				this.updateButton()
+			}
+		})
 		document.addEventListener('visibilitychange', () => {
-			if (!this.ctx) return
-			const operation = document.hidden ? this.ctx.suspend() : this.ctx.resume()
-			operation.catch(() => {})
+			if (document.hidden) {
+				this.stopMusic()
+				this.ctx?.suspend().catch(() => {})
+			} else if (this.unlocked) {
+				this.ctx?.resume().catch(() => {})
+				this.playMusic()
+			}
 		})
 	}
+
 	updateButton() {
-		this.button.textContent = this.enabled ? this.ctx ? '音乐开' : '播放音乐' : '音乐关'
-		this.button.setAttribute('aria-pressed', String(this.enabled))
+		const playing = this.enabled && this.status === 'playing'
+		this.button.textContent = !this.enabled ? '音乐关' : playing ? '音乐开'
+			: this.status === 'starting' ? '音乐加载中' : this.status === 'blocked' ? '点此重试音乐' : '播放音乐'
+		this.button.setAttribute('aria-pressed', String(playing))
 	}
+
 	toggle() {
-		// The first click should start the soundtrack, not mute it.
-		if (!this.ctx && this.enabled) { this.unlock(); return }
+		if (this.enabled && this.status !== 'playing') { this.unlock(); return }
 		this.enabled = !this.enabled
-		try { localStorage.setItem('canteen-sound', this.enabled ? 'on' : 'off') } catch {}
-		this.updateButton()
+		try { localStorage.setItem('canteen-music-v22', this.enabled ? 'on' : 'off') } catch {}
 		if (this.enabled) this.unlock()
-		if (this.music) this.music.gain.setTargetAtTime(this.enabled ? .76 : 0, this.ctx.currentTime, .06)
+		else this.stopMusic()
+		this.updateButton()
 	}
-	unlock() {
-		try {
-			if (!this.ctx) {
-				const Context = window.AudioContext || window.webkitAudioContext
-				if (!Context) {
-					this.button.textContent = '音乐不可用'
-					this.button.disabled = true
-					return
-				}
-				this.ctx = new Context()
-				this.master = this.ctx.createGain()
-				this.music = this.ctx.createGain()
-				this.effects = this.ctx.createGain()
-				this.master.gain.value = .65
-				this.music.gain.value = this.enabled ? .76 : 0
-				this.effects.gain.value = .68
-				this.music.connect(this.master)
-				this.effects.connect(this.master)
-				this.master.connect(this.ctx.destination)
-			}
-			this.ctx.resume().catch(() => {})
-			this.setScene(this.wanted || 'camp')
-			this.updateButton()
-		} catch {}
-	}
-	setScene(track) {
-		this.wanted = track
-		if (!this.ctx || this.track === track) return
-		const {ctx, music} = this
-		if (!this.buffers.has(track)) this.buffers.set(track, makeLoop(ctx, scores[track]))
-		const source = ctx.createBufferSource()
-		const channel = ctx.createGain()
-		source.buffer = this.buffers.get(track)
-		source.loop = true
-		const now = ctx.currentTime
-		channel.gain.value = 0
-		source.connect(channel).connect(music)
-		source.start()
-		channel.gain.linearRampToValueAtTime(.78, now + .28)
-		source.onended = () => { source.disconnect(); channel.disconnect() }
-		if (this.current) {
-			this.current.channel.gain.setTargetAtTime(0, now, .06)
-			this.current.source.stop(now + .3)
+
+	initEffects() {
+		if (!this.ctx) {
+			const Context = window.AudioContext || window.webkitAudioContext
+			if (!Context) return
+			this.ctx = new Context()
+			this.effects = this.ctx.createGain()
+			this.effects.gain.value = .55
+			this.effects.connect(this.ctx.destination)
 		}
-		this.current = {source, channel}
-		this.track = track
+		this.resumePending = this.ctx.resume().catch(() => {})
 	}
+
+	unlock() {
+		this.unlocked = true
+		try { this.initEffects() } catch {}
+		this.playMusic()
+	}
+
+	setScene(track) {
+		if (track === this.wanted) return
+		this.wanted = track
+		this.playMusic()
+	}
+
+	stopFallback() {
+		if (!this.fallback) return
+		this.fallback.source.stop()
+		this.fallback.source.disconnect()
+		this.fallback.gain.disconnect()
+		this.fallback = null
+	}
+
+	stopMusic() {
+		this.revision++
+		this.media.pause()
+		this.stopFallback()
+		this.status = 'idle'
+		this.updateButton()
+	}
+
+	playMusic() {
+		if (!this.enabled || !this.unlocked || document.hidden) return
+		const track = this.wanted
+		if (track === this.track && (this.status === 'starting' || this.status === 'playing')) return
+		const revision = ++this.revision
+		if (!this.tracks.has(track)) {
+			const samples = makeLoop(scores[track])
+			let url
+			try { url = wavUrl(samples) } catch {}
+			this.tracks.set(track, {samples, url})
+		}
+		const {samples, url} = this.tracks.get(track)
+		this.stopFallback()
+		this.status = 'starting'
+		this.track = track
+		this.updateButton()
+		const fallback = async () => {
+			if (this.ctx && this.ctx.state !== 'running' && this.resumePending) {
+				await Promise.race([this.resumePending, new Promise(resolve => setTimeout(resolve, 800))])
+			}
+			if (revision !== this.revision || !this.enabled) return
+			if (this.ctx?.state === 'running') {
+				try {
+					const ctx = this.ctx
+					const source = ctx.createBufferSource()
+					source.buffer = ctx.createBuffer(1, samples.length, sampleRate)
+					source.buffer.getChannelData(0).set(samples)
+					source.loop = true
+					const gain = ctx.createGain()
+					gain.gain.value = .68
+					source.connect(gain).connect(ctx.destination)
+					source.start()
+					this.fallback = {source, gain}
+					this.status = 'playing'
+					this.updateButton()
+					return
+				} catch {}
+			}
+			this.status = 'blocked'
+			this.updateButton()
+		}
+		if (!url) { fallback(); return }
+		try {
+			if (this.media.src !== url) this.media.src = url
+			this.media.play()?.catch(fallback)
+		} catch { fallback() }
+	}
+
 	effect(action) {
 		if (!this.ctx || this.ctx.state !== 'running') return
 		for (const [i, midi] of (effects[action] || []).entries()) {

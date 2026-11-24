@@ -6,6 +6,7 @@ import {CampfireRoom, MonsterRoom, StartRoom} from './game/rooms.js'
 import {getCurrRoom, isCurrRoomCompleted, isDungeonCompleted} from './game/utils-state.js'
 import {shuffle} from './utils.js'
 import {foodById, foes, recipes, rewardPool, starter} from './pantry.js'
+import {safetyStops} from './safety.js'
 
 export const trail = [
 	[{id: 'start', name: '营地', next: ['market']}],
@@ -68,7 +69,7 @@ export function newFoodRun(challenge = false) {
 	const state = actions.setDungeon(actions.createNewState(), makeTrail(challenge))
 	return {
 		...state, deck: starter.map(makeFood), phase: 'intro', challenge,
-		table: emptyTable(), round: 1, rewards: [], learned: [], crafted: 0, countersCleared: 0,
+		table: emptyTable(), round: 1, rewards: [], learned: [], crafted: 0, countersCleared: 0, safetyChecks: {},
 		message: '把食材带进工作台，试试能配出什么。',
 	}
 }
@@ -188,6 +189,31 @@ function adjustEnemy(state, change) {
 
 function blockPlayer(state, amount) {
 	return produce(state, (draft) => {draft.player.block += amount})
+}
+
+export function safetyCheckFor(state) {
+	if (state.phase !== 'fight' && state.phase !== 'camp') return null
+	return safetyStops[state.dungeon.y - 1] ?? null
+}
+
+export function handleSafetyChoice(state, choiceId) {
+	const check = safetyCheckFor(state)
+	if (!check || state.safetyChecks[check.id]?.passed) return state
+	const choice = check.choices.find(option => option.id === choiceId)
+	if (!choice) return state
+	return produce(state, draft => {
+		let award = 0
+		if (choice.safe) {
+			if (state.phase === 'camp') {
+				award = Math.min(4, draft.player.maxHealth - draft.player.currentHealth)
+				draft.player.currentHealth += award
+			} else {
+				award = 5
+				draft.player.block += award
+			}
+		}
+		draft.safetyChecks[check.id] = {passed: !!choice.safe, choiceId, award}
+	})
 }
 
 function checkBattleEnd(state) {

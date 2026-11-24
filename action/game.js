@@ -84,8 +84,8 @@ function resize(){
  }
  const w=Math.max(1,canvas.clientWidth),h=Math.max(1,canvas.clientHeight);
  const oldWidth=W,oldHeight=H;
- W=1100;
- H=touchScreen.matches?540:720;
+ H=touchScreen.matches?520:720;
+ W=touchScreen.matches?Math.max(1,Math.round(H*w/h)):1100;
  const dpr=Math.min(devicePixelRatio||1,2),scale=Math.min(w/W,h/H);
  canvas.width=w*dpr;canvas.height=h*dpr;
  view={width:w,height:h,dpr,scale,x:(w-W*scale)/2,y:(h-H*scale)/2};

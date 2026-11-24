@@ -2647,6 +2647,66 @@
     }
   };
 
+  // src/safety.js
+  var safetySource = "https://www.who.int/activities/promoting-safe-food-handling/five-key-to-safer-food";
+  var safetyStops = [
+    {
+      id: "clean",
+      name: "\u4FDD\u6301\u6E05\u6D01",
+      situation: "\u521A\u6574\u7406\u5B8C\u96C6\u5E02\u8D27\u7BB1\uFF0C\u51C6\u5907\u5207\u80E1\u841D\u535C\u3002",
+      choices: [
+        { id: "wipe", label: "\u5728\u56F4\u88D9\u4E0A\u64E6\u624B", feedback: "\u64E6\u56F4\u88D9\u4E0D\u80FD\u4EE3\u66FF\u6D17\u624B\u3002\u5904\u7406\u98DF\u6750\u524D\uFF0C\u8981\u7528\u80A5\u7682\u548C\u5B89\u5168\u7684\u6C34\u6D17\u624B\u3002" },
+        { id: "wash", label: "\u7528\u80A5\u7682\u548C\u6C34\u6D17\u624B", safe: true },
+        { id: "gloves", label: "\u4E0D\u6D17\u624B\uFF0C\u76F4\u63A5\u6234\u624B\u5957", feedback: "\u6234\u624B\u5957\u4E5F\u8981\u5148\u6D17\u624B\uFF0C\u5E76\u4FDD\u6301\u9910\u5177\u548C\u53F0\u9762\u6E05\u6D01\u3002" }
+      ],
+      tip: "\u5907\u9910\u524D\u6D17\u624B\uFF0C\u4E5F\u6E05\u6D01\u5200\u5177\u3001\u7827\u677F\u548C\u53F0\u9762\u3002"
+    },
+    {
+      id: "separate",
+      name: "\u751F\u719F\u5206\u5F00",
+      situation: "\u7827\u677F\u521A\u5207\u8FC7\u751F\u9E21\u8089\uFF0C\u63A5\u4E0B\u6765\u8981\u5207\u76F4\u63A5\u5403\u7684\u82F9\u679C\u3002",
+      choices: [
+        { id: "turn", label: "\u7FFB\u4E2A\u9762\u63A5\u7740\u5207", feedback: "\u7FFB\u9762\u53EF\u80FD\u4ECD\u628A\u751F\u8089\u6C41\u5E26\u5230\u6C34\u679C\u4E0A\u3002\u7ED9\u5373\u98DF\u98DF\u7269\u7528\u53E6\u4E00\u5757\u5E72\u51C0\u7827\u677F\u3002" },
+        { id: "wait", label: "\u653E\u5E72\u4EE5\u540E\u7528\u539F\u7827\u677F", feedback: "\u8868\u9762\u53D8\u5E72\u4E0D\u80FD\u4FDD\u8BC1\u5B89\u5168\u3002\u751F\u98DF\u4E0E\u5373\u98DF\u98DF\u7269\u5E94\u4F7F\u7528\u5206\u5F00\u7684\u7528\u5177\u3002" },
+        { id: "board", label: "\u6362\u5E72\u51C0\u7827\u677F\u548C\u5200", safe: true }
+      ],
+      tip: "\u751F\u8089\u7528\u8FC7\u7684\u5200\u548C\u7827\u677F\u8981\u4E0E\u719F\u98DF\u3001\u5373\u98DF\u98DF\u7269\u5206\u5F00\uFF0C\u9632\u6B62\u4EA4\u53C9\u6C61\u67D3\u3002"
+    },
+    {
+      id: "cook",
+      name: "\u70E7\u719F\u716E\u900F",
+      situation: "\u9505\u91CC\u7684\u9E21\u8089\u8868\u9762\u53D8\u8272\u4E86\uFF0C\u600E\u4E48\u786E\u8BA4\u53EF\u4EE5\u51FA\u9505\uFF1F",
+      choices: [
+        { id: "check", label: "\u7528\u6E29\u5EA6\u8BA1\u68C0\u67E5\u6700\u539A\u5904", safe: true },
+        { id: "surface", label: "\u8868\u9762\u53D8\u8272\u5C31\u51FA\u9505", feedback: "\u8868\u9762\u53D8\u8272\u4E0D\u80FD\u8BC1\u660E\u4E2D\u5FC3\u719F\u900F\u3002\u7528\u98DF\u54C1\u6E29\u5EA6\u8BA1\u68C0\u67E5\u6700\u539A\u5904\u3002" },
+        { id: "smell", label: "\u95FB\u8D77\u6765\u9999\u5C31\u51FA\u9505", feedback: "\u9999\u5473\u4E0D\u80FD\u5224\u65AD\u662F\u5426\u719F\u900F\u3002\u70F9\u8C03\u65F6\u8981\u68C0\u67E5\u98DF\u7269\u4E2D\u5FC3\u3002" }
+      ],
+      tip: "\u8089\u3001\u79BD\u3001\u86CB\u548C\u6D77\u9C9C\u8981\u719F\u900F\u3002\u7528\u98DF\u54C1\u6E29\u5EA6\u8BA1\u786E\u8BA4\u4E2D\u5FC3\u8FBE\u5230\u76F8\u5E94\u98DF\u6750\u7684\u5B89\u5168\u6E29\u5EA6\u3002"
+    },
+    {
+      id: "temperature",
+      name: "\u5B89\u5168\u6E29\u5EA6",
+      situation: "\u716E\u597D\u7684\u996D\u83DC\u591A\u51FA\u4E00\u4EFD\uFF0C\u51C6\u5907\u7559\u5230\u665A\u4E9B\u65F6\u5019\u5403\u3002",
+      choices: [
+        { id: "overnight", label: "\u653E\u684C\u4E0A\u7B49\u5230\u665A\u4E0A", feedback: "\u719F\u98DF\u4E0D\u8981\u5728\u5BA4\u6E29\u4E45\u653E\u3002\u5206\u88C5\u540E\u53CA\u65F6\u51B7\u85CF\u66F4\u5B89\u5168\u3002" },
+        { id: "cool", label: "\u5206\u88C5\u5E76\u53CA\u65F6\u51B7\u85CF", safe: true },
+        { id: "cover", label: "\u76D6\u4E0A\u76D6\u5B50\u653E\u5728\u6E29\u70ED\u7684\u7076\u53F0", feedback: "\u76D6\u76D6\u5B50\u4E0D\u80FD\u63A7\u5236\u6E29\u5EA6\u3002\u8981\u53CA\u65F6\u51B7\u85CF\uFF0C\u6216\u7EF4\u6301\u8DB3\u591F\u7684\u70ED\u5EA6\u3002" }
+      ],
+      tip: "\u719F\u98DF\u4E0E\u6613\u8150\u98DF\u6750\u8981\u53CA\u65F6\u51B7\u85CF\uFF0C\u719F\u98DF\u4E0D\u8981\u5728\u5BA4\u6E29\u4E0B\u653E\u7F6E\u8D85\u8FC7\u4E24\u5C0F\u65F6\u3002"
+    },
+    {
+      id: "supplies",
+      name: "\u5B89\u5168\u7528\u6C34\u548C\u539F\u6599",
+      situation: "\u5728\u51FA\u53E3\u8981\u7528\u6C34\u6E05\u6D17\u76F4\u63A5\u5165\u53E3\u7684\u6C34\u679C\u3002",
+      choices: [
+        { id: "stream", label: "\u7528\u770B\u8D77\u6765\u5E72\u51C0\u7684\u6EAA\u6C34", feedback: "\u770B\u8D77\u6765\u6E05\u6F88\u4E0D\u80FD\u8BC1\u660E\u6C34\u5B89\u5168\u3002\u6E05\u6D17\u5373\u98DF\u6C34\u679C\u5E94\u4F7F\u7528\u5B89\u5168\u7528\u6C34\u3002" },
+        { id: "reuse", label: "\u7528\u6D17\u8FC7\u751F\u8089\u7684\u6C34", feedback: "\u6D17\u8FC7\u751F\u8089\u7684\u6C34\u53EF\u80FD\u6C61\u67D3\u6C34\u679C\u3002\u4F7F\u7528\u5B89\u5168\u7684\u6C34\u548C\u5E72\u51C0\u7528\u5177\u3002" },
+        { id: "water", label: "\u7528\u5B89\u5168\u996E\u7528\u6C34\u6D17\u65B0\u9C9C\u6C34\u679C", safe: true }
+      ],
+      tip: "\u7528\u5B89\u5168\u7684\u6C34\uFF0C\u6311\u9009\u65B0\u9C9C\u53EF\u9760\u7684\u539F\u6599\uFF1B\u6E05\u6D17\u8981\u751F\u5403\u7684\u852C\u679C\u3002"
+    }
+  ];
+
   // src/food-run.js
   var trail = [
     [{ id: "start", name: "\u8425\u5730", next: ["market"] }],
@@ -2714,6 +2774,7 @@
       learned: [],
       crafted: 0,
       countersCleared: 0,
+      safetyChecks: {},
       message: "\u628A\u98DF\u6750\u5E26\u8FDB\u5DE5\u4F5C\u53F0\uFF0C\u8BD5\u8BD5\u80FD\u914D\u51FA\u4EC0\u4E48\u3002"
     };
   }
@@ -2827,6 +2888,29 @@
   function blockPlayer(state2, amount) {
     return produce(state2, (draft) => {
       draft.player.block += amount;
+    });
+  }
+  function safetyCheckFor(state2) {
+    if (state2.phase !== "fight" && state2.phase !== "camp") return null;
+    return safetyStops[state2.dungeon.y - 1] ?? null;
+  }
+  function handleSafetyChoice(state2, choiceId) {
+    const check = safetyCheckFor(state2);
+    if (!check || state2.safetyChecks[check.id]?.passed) return state2;
+    const choice = check.choices.find((option) => option.id === choiceId);
+    if (!choice) return state2;
+    return produce(state2, (draft) => {
+      let award = 0;
+      if (choice.safe) {
+        if (state2.phase === "camp") {
+          award = Math.min(4, draft.player.maxHealth - draft.player.currentHealth);
+          draft.player.currentHealth += award;
+        } else {
+          award = 5;
+          draft.player.block += award;
+        }
+      }
+      draft.safetyChecks[check.id] = { passed: !!choice.safe, choiceId, award };
     });
   }
   function checkBattleEnd(state2) {
@@ -3274,11 +3358,11 @@
     travel: [62, 69]
   };
   var hz = (note) => 440 * 2 ** ((note - 69) / 12);
-  function makeLoop(ctx, score) {
-    const rate = 22050;
+  var sampleRate = 22050;
+  function makeLoop(score) {
+    const rate = sampleRate;
     const step = 30 / score.bpm;
-    const buffer = ctx.createBuffer(1, Math.round(32 * step * rate), rate);
-    const samples = buffer.getChannelData(0);
+    const samples = new Float32Array(Math.round(32 * step * rate));
     function voice(index, frequency, duration, volume, color) {
       const start = Math.round(index * step * rate);
       const length = Math.round(duration * rate);
@@ -3298,94 +3382,185 @@
       if (score.drums && i % 4 === 0) voice(i, 57, 0.12, 0.23, 0.2);
       if (score.drums && i % 4 === 2) voice(i, 147, 0.064, 0.085, 0.6);
     }
-    return buffer;
+    let peak = 0;
+    for (const value of samples) peak = Math.max(peak, Math.abs(value));
+    if (peak) for (let i = 0; i < samples.length; i++) samples[i] *= 0.87 / peak;
+    return samples;
+  }
+  function wavUrl(samples) {
+    const bytes = new ArrayBuffer(44 + samples.length * 2);
+    const view = new DataView(bytes);
+    const label = (offset, text) => {
+      for (let i = 0; i < text.length; i++) view.setUint8(offset + i, text.charCodeAt(i));
+    };
+    label(0, "RIFF");
+    view.setUint32(4, bytes.byteLength - 8, true);
+    label(8, "WAVEfmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    label(36, "data");
+    view.setUint32(40, samples.length * 2, true);
+    for (let i = 0; i < samples.length; i++) view.setInt16(44 + i * 2, Math.round(samples[i] * 32767), true);
+    return URL.createObjectURL(new Blob([bytes], { type: "audio/wav" }));
   }
   var CanteenSound = class {
-    constructor(button) {
+    constructor(button, media) {
       this.button = button;
+      this.media = media;
+      this.wanted = "camp";
       this.enabled = true;
-      this.buffers = /* @__PURE__ */ new Map();
+      this.status = "idle";
+      this.revision = 0;
+      this.tracks = /* @__PURE__ */ new Map();
+      this.media.volume = 0.72;
       try {
-        this.enabled = localStorage.getItem("canteen-sound") !== "off";
+        this.enabled = localStorage.getItem("canteen-music-v22") !== "off";
       } catch {
       }
       this.updateButton();
+      this.media.addEventListener("playing", () => {
+        if (this.enabled && !document.hidden && !this.media.paused) {
+          this.stopFallback();
+          this.status = "playing";
+          this.updateButton();
+        }
+      });
+      this.media.addEventListener("pause", () => {
+        if (this.status === "playing" && !this.fallback) {
+          this.status = "idle";
+          this.updateButton();
+        }
+      });
       document.addEventListener("visibilitychange", () => {
-        if (!this.ctx) return;
-        const operation = document.hidden ? this.ctx.suspend() : this.ctx.resume();
-        operation.catch(() => {
-        });
+        if (document.hidden) {
+          this.stopMusic();
+          this.ctx?.suspend().catch(() => {
+          });
+        } else if (this.unlocked) {
+          this.ctx?.resume().catch(() => {
+          });
+          this.playMusic();
+        }
       });
     }
     updateButton() {
-      this.button.textContent = this.enabled ? this.ctx ? "\u97F3\u4E50\u5F00" : "\u64AD\u653E\u97F3\u4E50" : "\u97F3\u4E50\u5173";
-      this.button.setAttribute("aria-pressed", String(this.enabled));
+      const playing = this.enabled && this.status === "playing";
+      this.button.textContent = !this.enabled ? "\u97F3\u4E50\u5173" : playing ? "\u97F3\u4E50\u5F00" : this.status === "starting" ? "\u97F3\u4E50\u52A0\u8F7D\u4E2D" : this.status === "blocked" ? "\u70B9\u6B64\u91CD\u8BD5\u97F3\u4E50" : "\u64AD\u653E\u97F3\u4E50";
+      this.button.setAttribute("aria-pressed", String(playing));
     }
     toggle() {
-      if (!this.ctx && this.enabled) {
+      if (this.enabled && this.status !== "playing") {
         this.unlock();
         return;
       }
       this.enabled = !this.enabled;
       try {
-        localStorage.setItem("canteen-sound", this.enabled ? "on" : "off");
+        localStorage.setItem("canteen-music-v22", this.enabled ? "on" : "off");
       } catch {
       }
-      this.updateButton();
       if (this.enabled) this.unlock();
-      if (this.music) this.music.gain.setTargetAtTime(this.enabled ? 0.76 : 0, this.ctx.currentTime, 0.06);
+      else this.stopMusic();
+      this.updateButton();
+    }
+    initEffects() {
+      if (!this.ctx) {
+        const Context = window.AudioContext || window.webkitAudioContext;
+        if (!Context) return;
+        this.ctx = new Context();
+        this.effects = this.ctx.createGain();
+        this.effects.gain.value = 0.55;
+        this.effects.connect(this.ctx.destination);
+      }
+      this.resumePending = this.ctx.resume().catch(() => {
+      });
     }
     unlock() {
+      this.unlocked = true;
       try {
-        if (!this.ctx) {
-          const Context = window.AudioContext || window.webkitAudioContext;
-          if (!Context) {
-            this.button.textContent = "\u97F3\u4E50\u4E0D\u53EF\u7528";
-            this.button.disabled = true;
-            return;
-          }
-          this.ctx = new Context();
-          this.master = this.ctx.createGain();
-          this.music = this.ctx.createGain();
-          this.effects = this.ctx.createGain();
-          this.master.gain.value = 0.65;
-          this.music.gain.value = this.enabled ? 0.76 : 0;
-          this.effects.gain.value = 0.68;
-          this.music.connect(this.master);
-          this.effects.connect(this.master);
-          this.master.connect(this.ctx.destination);
-        }
-        this.ctx.resume().catch(() => {
-        });
-        this.setScene(this.wanted || "camp");
-        this.updateButton();
+        this.initEffects();
       } catch {
       }
+      this.playMusic();
     }
     setScene(track) {
+      if (track === this.wanted) return;
       this.wanted = track;
-      if (!this.ctx || this.track === track) return;
-      const { ctx, music } = this;
-      if (!this.buffers.has(track)) this.buffers.set(track, makeLoop(ctx, scores[track]));
-      const source = ctx.createBufferSource();
-      const channel = ctx.createGain();
-      source.buffer = this.buffers.get(track);
-      source.loop = true;
-      const now = ctx.currentTime;
-      channel.gain.value = 0;
-      source.connect(channel).connect(music);
-      source.start();
-      channel.gain.linearRampToValueAtTime(0.78, now + 0.28);
-      source.onended = () => {
-        source.disconnect();
-        channel.disconnect();
-      };
-      if (this.current) {
-        this.current.channel.gain.setTargetAtTime(0, now, 0.06);
-        this.current.source.stop(now + 0.3);
+      this.playMusic();
+    }
+    stopFallback() {
+      if (!this.fallback) return;
+      this.fallback.source.stop();
+      this.fallback.source.disconnect();
+      this.fallback.gain.disconnect();
+      this.fallback = null;
+    }
+    stopMusic() {
+      this.revision++;
+      this.media.pause();
+      this.stopFallback();
+      this.status = "idle";
+      this.updateButton();
+    }
+    playMusic() {
+      if (!this.enabled || !this.unlocked || document.hidden) return;
+      const track = this.wanted;
+      if (track === this.track && (this.status === "starting" || this.status === "playing")) return;
+      const revision = ++this.revision;
+      if (!this.tracks.has(track)) {
+        const samples2 = makeLoop(scores[track]);
+        let url2;
+        try {
+          url2 = wavUrl(samples2);
+        } catch {
+        }
+        this.tracks.set(track, { samples: samples2, url: url2 });
       }
-      this.current = { source, channel };
+      const { samples, url } = this.tracks.get(track);
+      this.stopFallback();
+      this.status = "starting";
       this.track = track;
+      this.updateButton();
+      const fallback = async () => {
+        if (this.ctx && this.ctx.state !== "running" && this.resumePending) {
+          await Promise.race([this.resumePending, new Promise((resolve) => setTimeout(resolve, 800))]);
+        }
+        if (revision !== this.revision || !this.enabled) return;
+        if (this.ctx?.state === "running") {
+          try {
+            const ctx = this.ctx;
+            const source = ctx.createBufferSource();
+            source.buffer = ctx.createBuffer(1, samples.length, sampleRate);
+            source.buffer.getChannelData(0).set(samples);
+            source.loop = true;
+            const gain = ctx.createGain();
+            gain.gain.value = 0.68;
+            source.connect(gain).connect(ctx.destination);
+            source.start();
+            this.fallback = { source, gain };
+            this.status = "playing";
+            this.updateButton();
+            return;
+          } catch {
+          }
+        }
+        this.status = "blocked";
+        this.updateButton();
+      };
+      if (!url) {
+        fallback();
+        return;
+      }
+      try {
+        if (this.media.src !== url) this.media.src = url;
+        this.media.play()?.catch(fallback);
+      } catch {
+        fallback();
+      }
     }
     effect(action) {
       if (!this.ctx || this.ctx.state !== "running") return;
@@ -3420,7 +3595,7 @@
   var locked = false;
   var feedback = {};
   var cardChoice = null;
-  var sound = new CanteenSound(document.querySelector("[data-sound]"));
+  var sound = new CanteenSound(document.querySelector("[data-sound]"), document.querySelector("#canteen-music"));
   var icon = (id, css = "") => `<img class="pixel ${css}" src="./assets/${id}.png" alt="" draggable="false">`;
   var btn = (action, name, css = "", id = "") => `<button type="button" class="${css}" data-action="${action}" data-id="${id}">${name}</button>`;
   var meal = recipes.find((recipe) => recipe.id === "meal");
@@ -3553,6 +3728,26 @@
 		${!cardChoice && !reserved && intent.interrupt && !intent.interrupted ? "<p>\u5148\u8BD5\u7740\u5408\u6210\u914D\u65B9\uFF0C\u53EF\u4EE5\u628A\u706B\u5019\u7559\u5230\u66F4\u96BE\u7684\u4E00\u51FB\u3002</p>" : ""}
 	</section>`;
   }
+  function safetyProgress() {
+    return Object.values(state.safetyChecks).filter((check) => check.passed).length;
+  }
+  function safetyView() {
+    const check = safetyCheckFor(state);
+    if (!check) return "";
+    const record = state.safetyChecks[check.id];
+    const unit = state.phase === "camp" ? "\u8010\u529B" : "\u62A4\u76FE";
+    if (record?.passed) return `<section class="safety-box safety-cleared" aria-label="\u98DF\u54C1\u5B89\u5168">
+		<strong>\u2713 ${check.name}</strong><span>${check.tip}${record.award ? " \xB7 \u6E38\u620F\u5956\u52B1 +" + record.award + " " + unit : ""}</span>
+	</section>`;
+    const answer = check.choices.find((choice) => choice.id === record?.choiceId);
+    const open = check.id === "clean" && state.round === 1 && state.table.cards.length === 0 || !!answer;
+    return `<details class="safety-box" ${open ? "open" : ""}>
+		<summary><strong>\u98DF\u54C1\u5B89\u5168 \xB7 ${check.name}</strong><span>${state.phase === "camp" ? "\u5904\u7406\u5F97\u5F53\u53EF\u6062\u590D\u8010\u529B" : "\u5B89\u5168\u5904\u7406\u53EF\u83B7\u5F97 5 \u62A4\u76FE"}</span></summary>
+		<p>${check.situation}</p>
+		<div class="safety-choices">${check.choices.map((option) => btn("safety", option.label, "safety-choice", option.id)).join("")}</div>
+		${answer ? `<p class="safety-feedback" role="status">${answer.feedback} \u53EF\u4EE5\u518D\u9009\u4E00\u6B21\u3002</p>` : ""}
+	</details>`;
+  }
   function battle() {
     const { id, y } = nodeAt(state);
     const foe = foes[id];
@@ -3602,7 +3797,7 @@
 		${down ? "" : counterView(intent.counter)}
 		<p class="encounter-story">${place.enter}</p>
 	</section>
-	<div class="inventory-frame">${tableView()}${down ? "" : tacticalPanel(intent)}
+	<div class="inventory-frame">${down ? "" : safetyView()}${tableView()}${down ? "" : tacticalPanel(intent)}
 	<section class="hand-panel">
 		<div class="hand-header">${energyView()}<div class="pile-info"><h2>\u624B\u724C</h2>
 			<small>\u62BD\u724C ${state.drawPile.length} \xB7 \u5F03\u724C ${state.discardPile.length}${state.exhaustPile.length ? ` \xB7 \u6D88\u8017 ${state.exhaustPile.length}` : ""}</small>
@@ -3627,7 +3822,8 @@
     return `<section class="hero">
 		<div class="hero-copy"><p class="eyebrow">\u708A\u706B\u8425\u5730 \xB7 \u81B3\u98DF\u5361\u724C\u8FDC\u5F81</p>
 		<h1>\u65B9\u5757\u98DF\u5802</h1>
-		<p class="hero-text">\u8425\u5730\u4ECA\u665A\u8FD8\u6CA1\u5F00\u996D\u3002\u5E26\u4E0A\u98DF\u6750\u724C\uFF0C\u95EF\u8FC7\u96C6\u5E02\u548C\u77FF\u9053\uFF0C\u628A\u4E00\u5957\u80FD\u642D\u5F97\u8D77\u6765\u7684\u665A\u9910\u5E26\u56DE\u7089\u706B\u8FB9\u3002</p>
+		<p class="hero-text">\u4ECE\u96C6\u5E02\u5230\u7089\u706B\u8FB9\uFF0C\u6BCF\u7AD9\u90FD\u8981\u9762\u5BF9\u4E00\u4E2A\u5907\u9910\u9009\u62E9\u3002\u5904\u7406\u597D\u98DF\u6750\uFF0C\u518D\u7528\u642D\u914D\u548C\u62C6\u62DB\u5E26\u56DE\u4ECA\u665A\u7684\u665A\u9910\u3002</p>
+		<button class="safety-guide" type="button" data-book="safety">\u67E5\u770B\u98DF\u54C1\u5B89\u5168\u4E94\u5927\u8981\u70B9</button>
 		<div class="hero-actions">${btn("travel", "\u5F00\u5C40 \xB7 \u5BF9\u6218\u96F6\u98DF\u53F2\u83B1\u59C6", "primary", "market")}
 			${btn("challenge", "\u6311\u6218\u8FDC\u5F81", "turn-button")}
 			${hint("hint-how", "\u73A9\u6CD5", "\u5148\u770B\u5BF9\u624B\u9884\u544A\uFF0C\u518D\u70B9\u624B\u724C\u3002\u6309\u8981\u6C42\u51FA\u724C\u6216\u53E0\u76FE\u53EF\u4EE5\u62C6\u62DB\u3002\n\u6362\u724C\u3001\u7559\u724C\u3001\u538B\u706B\u548C\u53BB\u58F3\u5171\u7528\u6218\u672F\u706B\u5019\u3002")}</div>
@@ -3676,7 +3872,7 @@
   }
   function camp() {
     return `<section class="interlude"><p class="eyebrow">\u7B2C 4 \u7AD9</p><h1>\u7BDD\u706B\u8865\u7ED9</h1>
-		<p>\u6062\u590D\u8010\u529B\uFF0C\u6216\u5347\u7EA7\u4E00\u5F20\u4F24\u5BB3\u724C / \u62A4\u76FE\u724C\u3002\u4E8C\u9009\u4E00\u3002</p>
+		${safetyView()}<p>\u6062\u590D\u8010\u529B\uFF0C\u6216\u5347\u7EA7\u4E00\u5F20\u4F24\u5BB3\u724C / \u62A4\u76FE\u724C\u3002\u4E8C\u9009\u4E00\u3002</p>
 		${btn("rest", "\u4F11\u606F \xB7 \u6062\u590D " + campRecovery(state.challenge) + " \u70B9\u8010\u529B", "primary")}
 		<div class="hand reward-hand">${state.deck.filter((card) => !card.upgraded && (card.damage || card.block)).map((card) => cardView(foodOf(card), { card, action: "upgrade" })).join("")}</div></section>`;
   }
@@ -3685,7 +3881,8 @@
     return `<section class="interlude"><p class="eyebrow">${win ? "\u95EF\u5173\u6210\u529F" : "\u8010\u529B\u8017\u5C3D"}</p>
 		<h1>${win ? "\u665A\u9910\u5E26\u56DE\u6765\u4E86" : "\u56DE\u8425\u5730\u518D\u5907\u4E00\u9910"}</h1>
 		<p>${win ? waypoints.boss.clear : `${waypoints[nodeAt(state).id].name}\u7684\u8DEF\u8FD8\u6CA1\u6253\u901A\u3002\u56DE\u53BB\u6362\u4E00\u4EFD\u98DF\u6750\u518D\u51FA\u53D1\u3002`}</p>
-		<p>\u8FD9\u8D9F\u5B8C\u6210\u4E86 ${state.crafted} \u6B21\u914D\u65B9\u3001\u62C6\u4E86 ${state.countersCleared} \u62DB\uFF0C\u8FC7\u4E86 ${state.learned.length} \u573A\u5BF9\u6218\u3002</p>
+		<p>\u5B8C\u6210\u98DF\u54C1\u5B89\u5168 ${safetyProgress()}/5 \u9879\u3001\u5408\u6210 ${state.crafted} \u6B21\u3001\u62C6\u62DB ${state.countersCleared} \u6B21\u3002</p>
+		<button class="safety-guide" type="button" data-book="safety">\u590D\u4E60\u98DF\u54C1\u5B89\u5168\u4E94\u5927\u8981\u70B9</button>
 		${btn("restart", "\u518D\u6765\u4E00\u5C40", "primary")}
 		${win ? reality("boss") : ""}</section>`;
   }
@@ -3701,6 +3898,8 @@
 			<ol class="recipe-list">${recipes.map((recipe) => `<li><strong>${recipe.name}</strong><span>${recipe.text}</span><small>${recipe.result}</small></li>`).join("")}</ol>`],
       map: ["\u8865\u7ED9\u8DEF\u7EBF", journeyMap()],
       deck: ["\u724C\u5E93 \xB7 " + state.deck.length + " \u5F20", `<div class="hand book-deck">${state.deck.map((card) => cardView(foodOf(card), { card })).join("")}</div>`],
+      safety: ["\u98DF\u54C1\u5B89\u5168\u4E94\u5927\u8981\u70B9", `<ol class="recipe-list safety-book">${safetyStops.map((check) => `<li><strong>${state.safetyChecks[check.id]?.passed ? "\u2713 " : ""}${check.name}</strong><span>${check.tip}</span></li>`).join("")}</ol>
+			<p>\u62A4\u76FE\u548C\u8010\u529B\u662F\u6E38\u620F\u5956\u52B1\u3002<a href="${safetySource}" target="_blank" rel="noreferrer">\u4E16\u754C\u536B\u751F\u7EC4\u7EC7 \xB7 \u98DF\u54C1\u5B89\u5168\u4E94\u5927\u8981\u70B9</a></p>`],
       sources: ["\u79D1\u666E\u4E0E\u7D20\u6750\u6765\u6E90", `<p>\u5361\u724C\u6570\u503C\u3001\u654C\u4EBA\u548C\u914D\u65B9\u4E3A\u6E38\u620F\u89C4\u5219\u3002\u901A\u5173\u4EE3\u8868\u5B8C\u6210\u6311\u6218\uFF0C\u73B0\u5B9E\u4E2D\u7684\u98CE\u9669\u4E0E\u5065\u5EB7\u7BA1\u7406\u9700\u6309\u4E13\u4E1A\u79D1\u666E\u8D44\u6599\u7406\u89E3\u3002</p>
 			<ul class="source-list">${Object.values(sources).map(([name, url]) => `<li><a href="${url}" target="_blank" rel="noreferrer">${name}</a></li>`).join("")}
 				<li><a href="https://github.com/oskarrough/slaytheweb" target="_blank" rel="noreferrer">Slay the Web \xB7 \u6218\u6597\u4E0E\u724C\u5806\u5F15\u64CE\uFF08AGPL-3.0-or-later\uFF09</a></li>
@@ -3744,6 +3943,12 @@
         state.hit ? "\u5BF9\u624B\u8010\u529B\u51CF\u5C11 " + state.hit : "",
         feedback.guardGain ? "\u4F60\u7684\u62A4\u76FE\u589E\u52A0 " + feedback.guardGain : ""
       ].filter(Boolean).join("\u3002");
+    } else if (action === "safety") {
+      const check = safetyCheckFor(state);
+      const outcome = state.safetyChecks[check.id];
+      const answer = check.choices.find((option) => option.id === outcome.choiceId);
+      if (outcome.passed) sound.effect("recipe");
+      announcer.textContent = outcome.passed ? check.tip : answer.feedback;
     } else if (action === "tactic" || action === "reserve" || action === "swap") {
       sound.effect("tactic");
       announcer.textContent = state.message;
@@ -3827,6 +4032,7 @@
       tactic: () => useTactic(state, id),
       reserve: () => useTactic(state, "reserve", id),
       swap: () => useTactic(state, "swap", id),
+      safety: () => handleSafetyChoice(state, id),
       end: () => finishTurn(state),
       reward: () => takeReward(state, id),
       rest: () => campChoice(state, "rest"),

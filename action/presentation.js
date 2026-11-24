@@ -116,14 +116,18 @@ Game.prototype.renderCraft=function(){
  overlay.innerHTML=`<div class="panel crafting">
   <h2>${this.delivery?'村庄外卖补给站':'工作台 · 餐盘合成'}</h2>
   <div class="craft-body">
+   <div class="craft-setup">
    <p class="recipe-goal"><strong>本章配方</strong> ${required.map(id=>'<mark>'+groupName(id)+'</mark>').join(' + ')}</p>
    <div class="craft-layout"><div class="grid-nine">${slots}</div><b class="craft-arrow" aria-hidden="true">➜</b>
    <button class="mc-slot result-slot" data-make-meal aria-label="合成餐盘" ${placed?'':'disabled'}>${placed?assets.html('soup'):''}</button></div>
    <p class="craft-instruction">${this.delivery?'艾莉丝：给外卖加份蔬菜和水果，再搭主食和蛋白质食品。':'艾莉丝：每类点一份。点合成格能取回，点同类食物可以替换。'}</p>
+   </div>
+   <div class="craft-stock">
    <div class="food-grid">${inventory||'<p>库存为空，先领取补给箱。</p>'}</div>
    ${missing.length?`<div class="alex-bubble"><b>Alex</b> 缺少 <strong>${missing.map(groupName).join('、')}</strong>。<button data-pantry ${cooldown?'disabled':''}>${cooldown?'战斗中再等 '+cooldown+' 秒':'领取缺项'}</button></div>`:''}
    <p id="craftResult" role="status"></p>
    <details><summary>配方说明</summary><p>餐盘补充生命并提供限时护盾。每章配方是游戏任务。现实中可以把不同食物安排在一天的不同餐次。</p></details>
+   </div>
   </div>
   <div class="panel-actions"><button class="primary" data-make-meal ${placed?'':'disabled'}>完成餐盘</button><button data-close-craft>${this.delivery?'前往末地':'返回战斗'}</button></div>
  </div>`;

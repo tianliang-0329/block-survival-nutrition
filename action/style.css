@@ -109,7 +109,7 @@ body:not([data-scene="playing"]):not([data-scene="tutorial"]):not([data-scene="b
 .dialogue .dialogue-advice,.knowledge-advice{border-left:4px solid #a6c681;padding-left:10px}
 .crafting,.guide{grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
 .craft-body,.codex-body{min-height:0;overflow:auto;overscroll-behavior:contain;padding:3px 6px 3px 2px}
-.craft-body>*+*{margin-top:8px}
+.craft-body>*+*,.craft-setup>*+*,.craft-stock>*+*{margin-top:8px}
 .recipe-goal{line-height:1.9}
 .recipe-goal mark{font-weight:750;white-space:nowrap}
 .craft-layout{display:flex;align-items:center;justify-content:center;gap:10px}
@@ -181,14 +181,14 @@ body[data-chapter="1"] #bossHud{color:#783452}
 body[data-chapter="1"] #tutorial{background:#dceab6;color:#233f2a}
 body[data-chapter="1"] .arena-frame{background:#a7ce83}
 .scene-overworld{background:#9dc767;background-image:linear-gradient(145deg,#d7e9a4 10%,#a1c972 55%,#729b51)}
-/* Touch controls are outside the canvas, so neither thumb covers enemies. */
+/* Touch controls sit above the full mobile arena. */
 #upgrade{background:#d6eb82;color:#24331f}
 
 .touch-actions{display:flex;align-items:center;gap:8px}
 @media(max-width:680px),(pointer:coarse){
  #game{grid-template-rows:auto minmax(0,1fr) auto auto}
  #touch{
-  --control-size:84px;
+  --control-size:var(--touch-diameter,84px);
   display:flex;gap:12px;align-items:center;justify-content:space-between;
   padding:4px 12px 7px;background:#21342b;z-index:2;
   touch-action:none;user-select:none;-webkit-user-select:none
@@ -225,44 +225,76 @@ body[data-chapter="1"] .arena-frame{background:#a7ce83}
 @media(pointer:coarse){
  #game{
   --view-wide:100dvw;
-  --control-lane:clamp(95px,calc(var(--view-wide)*.15),155px);
-  grid-template-columns:var(--control-lane) minmax(0,1fr) var(--control-lane);
-  grid-template-rows:auto minmax(0,1fr) auto
+  --hud-top:max(5px,env(safe-area-inset-top));
+  --hud-right:max(8px,env(safe-area-inset-right));
+  --hud-bottom:max(7px,env(safe-area-inset-bottom));
+  --hud-left:max(8px,env(safe-area-inset-left));
+  --touch-diameter:clamp(74px,calc(var(--view-wide)*.115),106px);
+  display:block;
  }
- .battle-header{grid-column:1/-1;grid-row:1;padding:3px 10px}
- .arena-frame{grid-column:2;grid-row:2}
+ .arena-frame{position:absolute;inset:0}
+ .battle-header,.battle-footer,
+ body[data-chapter="1"] .battle-header,
+ body[data-chapter="1"] .battle-footer{
+  position:absolute;border:0;padding:0;background:transparent;color:var(--ink);
+  pointer-events:none
+ }
+ .battle-header{inset:var(--hud-top) var(--hud-right) auto var(--hud-left)}
+ .battle-header button,.battle-footer button{pointer-events:auto}
+ .command-row{gap:5px;align-items:flex-start}
+ .stage,#bossHud,#toast,.battle-footer{
+  text-shadow:0 1px 2px #101d16
+ }
+ .stage{
+  padding:3px 8px;background:#162e24dd;border:1px solid #83a77f;
+  color:#f8efda;border-radius:5px;font-size:.84rem
+ }
+ .stage small,body[data-chapter="1"] .stage small{color:#e7efda;font-size:.69rem}
+ .tools button{min-height:34px;padding:2px 7px;font-size:.76rem;background:#243e32df}
+ .tools #upgrade{background:#d6eb82}
+ #bossHud,body[data-chapter="1"] #bossHud{
+  width:min(63%,460px);margin:4px auto 0;padding:2px 6px;color:#ffdcbd;
+  background:#26221ce0;border-radius:4px;font-size:.73rem
+ }
+ #toast,body[data-chapter="1"] #toast{
+  width:fit-content;max-width:min(70%,530px);min-height:0;padding:3px 8px;
+  margin:3px auto 0;color:#fff0bf;background:#203226e0;border-radius:4px;font-size:.73rem
+ }
+ #toast:empty{display:none}
  .battle-footer{
-  grid-column:1/-1;grid-row:3;padding:3px 8px;display:grid;
-  grid-template-columns:auto minmax(0,1fr);column-gap:10px
+  bottom:var(--hud-bottom);left:50%;transform:translateX(-50%);
+  width:min(420px,calc(100% - 2 * var(--touch-diameter) - 50px));text-align:center
  }
- #tutorial{grid-column:1/-1;margin:0;min-height:26px;padding:0 5px;font-size:.76rem}
- #tutorial button{min-height:26px}
- .battle-footer .vitals{gap:10px;margin:0}
- .battle-footer .vitals b{display:block;line-height:1.25}
- .battle-footer #hearts img,.battle-footer #hunger6 img{width:clamp(8px,calc(var(--view-wide)*.016),13px)}
- .battle-footer .inventory-row{display:flex;justify-content:flex-end;gap:5px}
- .battle-footer #plateStatus{min-height:30px;font-size:.78rem;padding:2px 5px}
- .battle-footer .stock-slot{width:clamp(23px,calc(var(--view-wide)*.04),32px);height:28px}
- .battle-footer .stock-slot img{width:20px;height:20px}
- .battle-footer .progress{min-width:70px;font-size:.75rem}
- .battle-footer .dash{display:none}
- .tools button{min-height:36px;padding:2px 8px;font-size:.8rem}
- #bossHud,#toast{font-size:.8rem}
- #toast{min-height:2.6em;padding-top:1px}
+ #tutorial,body[data-chapter="1"] #tutorial{
+  margin:0 auto 3px;padding:2px 5px;min-height:0;
+  background:#26362cde;color:#fff3ce;border-radius:4px;font-size:.7rem
+ }
+ #tutorial button{min-height:23px;padding:0 4px}
+ .battle-footer .vitals,.battle-footer .inventory-row{
+  width:fit-content;max-width:100%;margin:0 auto;padding:3px 6px;
+  gap:5px;justify-content:center;background:#1c3027d9;color:#fff2d6
+ }
+ .battle-footer .vitals{gap:10px;border-radius:5px 5px 0 0}
+ .battle-footer .vitals b{display:block;line-height:1.15;font-size:.68rem}
+ .battle-footer #hearts img,.battle-footer #hunger6 img{width:clamp(8px,calc(var(--view-wide)*.015),12px)}
+ .battle-footer .inventory-row{display:flex;border-radius:0 0 5px 5px}
+ .battle-footer #plateStatus{min-height:27px;font-size:.72rem;padding:2px 4px}
+ .battle-footer .stock-slot{width:clamp(21px,calc(var(--view-wide)*.035),29px);height:24px}
+ .battle-footer .stock-slot img{width:17px;height:17px}
+ .battle-footer .progress,.battle-footer .dash{display:none}
  #touch{
-  --control-size:clamp(74px,calc(var(--view-wide)*.12),108px);
-  grid-column:1/-1;grid-row:2;align-self:end;
-  padding:0 0 6px;display:grid;grid-template-columns:var(--control-lane) 1fr var(--control-lane);
-  justify-items:center;align-items:end;background:none;pointer-events:none
+  position:absolute;inset:auto var(--hud-right) var(--hud-bottom) var(--hud-left);
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0;background:none;pointer-events:none
  }
- #stick{grid-column:1;pointer-events:auto}
- .touch-actions{grid-column:3;flex-direction:column-reverse;gap:6px;pointer-events:none}
+ #stick{
+  pointer-events:auto;opacity:.88;
+  background:radial-gradient(circle,#294b39ba 45%,#173329b5 46%,#173329b5 64%,#58785fc6 65%)
+ }
+ .touch-actions{flex-direction:column-reverse;align-items:flex-end;gap:5px;pointer-events:none}
  .touch-actions button{pointer-events:auto}
- #dashButton{min-height:40px;min-width:52px}
-}
-@container (max-width:660px){
- .battle-footer .progress{display:none}
- .battle-footer .vitals{gap:6px}
+ #fire{background:#7e4828d9}
+ #dashButton{min-height:35px;min-width:48px;background:#354e3acd}
 }
 
 .hub-link{
@@ -272,12 +304,29 @@ body[data-chapter="1"] .arena-frame{background:#a7ce83}
 .hub-link:hover,.hub-link:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 @media(pointer:coarse){
  #game{container-type:inline-size}
+ .crafting{gap:6px;padding:9px 12px}
+ .crafting .craft-body{
+  display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:10px;align-items:start
+ }
+ .craft-body>.craft-stock{margin-top:0}
+ .crafting h2{font-size:1.25rem}
+ .craft-layout{gap:5px}
+ .crafting .grid-nine{grid-template-columns:repeat(3,33px)}
+ .crafting .mc-slot{width:33px;height:33px}
+ .crafting .result-slot{width:40px;height:40px}
+ .crafting .recipe-goal,.crafting .craft-instruction{font-size:.75rem}
+ .crafting .food-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,98px),1fr))}
+ .crafting .food-grid .ingredient{min-height:33px}
 }
 @media(pointer:coarse) and (orientation:portrait){
  html[data-forced-landscape] #game{
   position:absolute;top:0;left:100%;width:100dvh;height:100dvw;--view-wide:100dvh;
   transform:rotate(90deg);transform-origin:top left;
-  padding:env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left) env(safe-area-inset-top)
+  --hud-top:max(5px,env(safe-area-inset-right));
+  --hud-right:max(8px,env(safe-area-inset-bottom));
+  --hud-bottom:max(7px,env(safe-area-inset-left));
+  --hud-left:max(8px,env(safe-area-inset-top));
+  padding:0
  }
  #overlay{padding:8px}
 }

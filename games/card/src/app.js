@@ -1,12 +1,13 @@
 import {
 	accessibleNodes, campChoice, campRecovery, canUseTactic, enemyAt, finishTurn, foodOf, intentFor, newFoodRun, nodeAt,
-	playFood, recipesForPlay, startChallenge, takeReward, trail, travel, useTactic,
+	handleSafetyChoice, playFood, recipesForPlay, safetyCheckFor, startChallenge, takeReward, trail, travel, useTactic,
 } from './food-run.js'
 import {foodById, foes, groups, recipes, sources} from './pantry.js'
 import {setupHints} from './hints.js'
 import {portrait, waypoints} from './expedition.js'
 import {cardInMotion, flyToTable, reducedMotion} from './card-motion.js'
 import {CanteenSound} from './sound.js'
+import {safetySource, safetyStops} from './safety.js'
 
 const app = document.querySelector('#app')
 const dialog = document.querySelector('#book')
@@ -18,7 +19,7 @@ let state = newFoodRun()
 let locked = false
 let feedback = {}
 let cardChoice = null
-const sound = new CanteenSound(document.querySelector('[data-sound]'))
+const sound = new CanteenSound(document.querySelector('[data-sound]'), document.querySelector('#canteen-music'))
 
 const icon = (id, css = '') => `<img class="pixel ${css}" src="./assets/${id}.png" alt="" draggable="false">`
 const btn = (action, name, css = '', id = '') =>
@@ -170,6 +171,28 @@ function tacticalPanel(intent) {
 	</section>`
 }
 
+function safetyProgress() {
+	return Object.values(state.safetyChecks).filter(check => check.passed).length
+}
+
+function safetyView() {
+	const check = safetyCheckFor(state)
+	if (!check) return ''
+	const record = state.safetyChecks[check.id]
+	const unit = state.phase === 'camp' ? '耐力' : '护盾'
+	if (record?.passed) return `<section class="safety-box safety-cleared" aria-label="食品安全">
+		<strong>✓ ${check.name}</strong><span>${check.tip}${record.award ? ' · 游戏奖励 +' + record.award + ' ' + unit : ''}</span>
+	</section>`
+	const answer = check.choices.find(choice => choice.id === record?.choiceId)
+	const open = check.id === 'clean' && state.round === 1 && state.table.cards.length === 0 || !!answer
+	return `<details class="safety-box" ${open ? 'open' : ''}>
+		<summary><strong>食品安全 · ${check.name}</strong><span>${state.phase === 'camp' ? '处理得当可恢复耐力' : '安全处理可获得 5 护盾'}</span></summary>
+		<p>${check.situation}</p>
+		<div class="safety-choices">${check.choices.map(option => btn('safety', option.label, 'safety-choice', option.id)).join('')}</div>
+		${answer ? `<p class="safety-feedback" role="status">${answer.feedback} 可以再选一次。</p>` : ''}
+	</details>`
+}
+
 function battle() {
 	const {id, y} = nodeAt(state)
 	const foe = foes[id]
@@ -220,7 +243,7 @@ function battle() {
 		${down ? '' : counterView(intent.counter)}
 		<p class="encounter-story">${place.enter}</p>
 	</section>
-	<div class="inventory-frame">${tableView()}${down ? '' : tacticalPanel(intent)}
+	<div class="inventory-frame">${down ? '' : safetyView()}${tableView()}${down ? '' : tacticalPanel(intent)}
 	<section class="hand-panel">
 		<div class="hand-header">${energyView()}<div class="pile-info"><h2>手牌</h2>
 			<small>抽牌 ${state.drawPile.length} · 弃牌 ${state.discardPile.length}${state.exhaustPile.length ? ` · 消耗 ${state.exhaustPile.length}` : ''}</small>
@@ -242,7 +265,8 @@ function intro() {
 	return `<section class="hero">
 		<div class="hero-copy"><p class="eyebrow">炊火营地 · 膳食卡牌远征</p>
 		<h1>方块食堂</h1>
-		<p class="hero-text">营地今晚还没开饭。带上食材牌，闯过集市和矿道，把一套能搭得起来的晚餐带回炉火边。</p>
+		<p class="hero-text">从集市到炉火边，每站都要面对一个备餐选择。处理好食材，再用搭配和拆招带回今晚的晚餐。</p>
+		<button class="safety-guide" type="button" data-book="safety">查看食品安全五大要点</button>
 		<div class="hero-actions">${btn('travel', '开局 · 对战零食史莱姆', 'primary', 'market')}
 			${btn('challenge', '挑战远征', 'turn-button')}
 			${hint('hint-how', '玩法', '先看对手预告，再点手牌。按要求出牌或叠盾可以拆招。\n换牌、留牌、压火和去壳共用战术火候。')}</div>
@@ -296,7 +320,7 @@ function route() {
 
 function camp() {
 	return `<section class="interlude"><p class="eyebrow">第 4 站</p><h1>篝火补给</h1>
-		<p>恢复耐力，或升级一张伤害牌 / 护盾牌。二选一。</p>
+		${safetyView()}<p>恢复耐力，或升级一张伤害牌 / 护盾牌。二选一。</p>
 		${btn('rest', '休息 · 恢复 ' + campRecovery(state.challenge) + ' 点耐力', 'primary')}
 		<div class="hand reward-hand">${state.deck.filter((card) => !card.upgraded && (card.damage || card.block))
 			.map((card) => cardView(foodOf(card), {card, action: 'upgrade'})).join('')}</div></section>`
@@ -307,7 +331,8 @@ function finalScreen() {
 	return `<section class="interlude"><p class="eyebrow">${win ? '闯关成功' : '耐力耗尽'}</p>
 		<h1>${win ? '晚餐带回来了' : '回营地再备一餐'}</h1>
 		<p>${win ? waypoints.boss.clear : `${waypoints[nodeAt(state).id].name}的路还没打通。回去换一份食材再出发。`}</p>
-		<p>这趟完成了 ${state.crafted} 次配方、拆了 ${state.countersCleared} 招，过了 ${state.learned.length} 场对战。</p>
+		<p>完成食品安全 ${safetyProgress()}/5 项、合成 ${state.crafted} 次、拆招 ${state.countersCleared} 次。</p>
+		<button class="safety-guide" type="button" data-book="safety">复习食品安全五大要点</button>
 		${btn('restart', '再来一局', 'primary')}
 		${win ? reality('boss') : ''}</section>`
 }
@@ -330,6 +355,9 @@ function openBook(tab) {
 		map: ['补给路线', journeyMap()],
 		deck: ['牌库 · ' + state.deck.length + ' 张', `<div class="hand book-deck">${state.deck
 			.map((card) => cardView(foodOf(card), {card})).join('')}</div>`],
+		safety: ['食品安全五大要点', `<ol class="recipe-list safety-book">${safetyStops.map(check =>
+			`<li><strong>${state.safetyChecks[check.id]?.passed ? '✓ ' : ''}${check.name}</strong><span>${check.tip}</span></li>`).join('')}</ol>
+			<p>护盾和耐力是游戏奖励。<a href="${safetySource}" target="_blank" rel="noreferrer">世界卫生组织 · 食品安全五大要点</a></p>`],
 		sources: ['科普与素材来源', `<p>卡牌数值、敌人和配方为游戏规则。通关代表完成挑战，现实中的风险与健康管理需按专业科普资料理解。</p>
 			<ul class="source-list">${Object.values(sources).map(([name, url]) =>
 				`<li><a href="${url}" target="_blank" rel="noreferrer">${name}</a></li>`).join('')}
@@ -377,6 +405,12 @@ function present(next, action, flight) {
 			state.hit ? '对手耐力减少 ' + state.hit : '',
 			feedback.guardGain ? '你的护盾增加 ' + feedback.guardGain : '',
 		].filter(Boolean).join('。')
+	} else if (action === 'safety') {
+		const check = safetyCheckFor(state)
+		const outcome = state.safetyChecks[check.id]
+		const answer = check.choices.find(option => option.id === outcome.choiceId)
+		if (outcome.passed) sound.effect('recipe')
+		announcer.textContent = outcome.passed ? check.tip : answer.feedback
 	} else if (action === 'tactic' || action === 'reserve' || action === 'swap') {
 		sound.effect('tactic')
 		announcer.textContent = state.message
@@ -461,6 +495,7 @@ document.addEventListener('click', (event) => {
 		travel: () => travel(state, id), challenge: () => startChallenge(state), play: () => playFood(state, id),
 		tactic: () => useTactic(state, id), reserve: () => useTactic(state, 'reserve', id),
 		swap: () => useTactic(state, 'swap', id),
+		safety: () => handleSafetyChoice(state, id),
 		end: () => finishTurn(state), reward: () => takeReward(state, id),
 		rest: () => campChoice(state, 'rest'), upgrade: () => campChoice(state, 'upgrade', id),
 		restart: newFoodRun,
