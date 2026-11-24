@@ -53,7 +53,7 @@ class DialogueManager{
       <h2><mark>${line.title}</mark></h2>
       <p id="dialogueText">${line.text}</p>
       ${line.advice?'<p class="dialogue-advice">'+line.advice+'</p>':''}
-      <div class="panel-actions"><button class="primary" data-next>继续 →</button><button data-skip-dialogue>跳过</button></div>
+      <div class="panel-actions"><button class="primary" data-next>${line.brief?'回到战斗':'继续 →'}</button>${line.brief?'':'<button data-skip-dialogue>跳过</button>'}</div>
     </div>
   </div>`;
  }

@@ -62,8 +62,17 @@ Game.prototype.queueFoodLesson=function(group){
 };
 Game.prototype.warnBoss=function(){
  this.bus.emit('BOSS_WARNING');
- const recipe=this.round===3?'五类补给':'主食、蔬菜和蛋白质食品';
- this.notify('首领即将出现。艾莉丝：提前用'+recipe+'搭餐盘，登场时就能破盾。',5);
+ const recipe=this.round===3?'主食、蔬菜、蛋白质食品、水果和奶类':'主食、蔬菜和蛋白质食品';
+ if(this.round===2){
+  this.notify('首领即将出现。艾莉丝：提前用'+recipe+'搭餐盘，登场时就能破盾。',5);
+  return;
+ }
+ this.dialogue.openLines([{
+  speaker:'Alex（艾莉丝）',face:'alex',brief:true,
+  title:this.round===3?'末影龙：五类补给破盾':'首个首领：配餐破盾',
+  text:'打开工作台，用'+recipe+'搭成餐盘。缺食材可以领补给。',
+  advice:'现在备好，首领登场时就能破盾。'
+ }],STATES.DIALOGUE,()=>this.transition(this.combatState()));
 };
 Game.prototype.showMealFeedback=function(){
  const result=$('craftResult');
@@ -75,6 +84,11 @@ const activeUpdate=Game.prototype.update;
 Game.prototype.update=function(dt){
  activeUpdate.call(this,dt);
  if(!this.machine.active)return;
+ // Upgrade after the combat step so it cannot interrupt a hit or replace a Boss guide.
+ if(this.xp>=this.need&&this.upgradePromptedLevel!==this.level){
+  this.levelup();
+  if(!this.machine.active)return;
+ }
  this.noticeSeconds=Math.max(0,this.noticeSeconds-dt);
  if(this.shieldLessonPending){
   this.shieldLessonPending=false;
